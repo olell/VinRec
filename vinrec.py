@@ -9,7 +9,7 @@ from argparse import ArgumentParser
 import discogs
 import os
 import magic
-import autil
+import audio_util
 import shutil
 
 # Read command line arguments
@@ -32,7 +32,7 @@ discogs_reference = args.discogs_ref
 output_format = args.format
 
 # Split record
-songs = autil.split_record(args.audio)
+songs = audio_util.split_record(args.audio)
 index = 0
 for song in songs:
     index += 1
