@@ -1,3 +1,8 @@
+### Audio Stuff ###
+*.flac
+*.mp3
+*.wav
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
