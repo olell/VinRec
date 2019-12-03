@@ -15,6 +15,26 @@ import shutil
 def process_side(audio_path, side, cover, discogs_reference, output_format="flac", status={}):
 
     status.update({
+        "PROGRESS": {
+            "STEP": 0,
+            "STEPS": 7,
+            "STEP_NAMES": [
+                "-",
+                "Prerequisite",
+                "Getting Release Info",
+                "Splitting Record",
+                "Assign files",
+                "Metadata & Conversion",
+                "Follow Up",
+                "Done!"
+            ]
+        }
+    })
+
+
+    # STEP 1: Prerequisites
+    status["PROGRESS"].update({"STEP": 1})
+    status.update({
         "LOG": status.get("LOG", [])
     })
     status["LOG"].append("Creating tmp directory...")
@@ -26,14 +46,16 @@ def process_side(audio_path, side, cover, discogs_reference, output_format="flac
         shutil.rmtree(data_folder)
         os.mkdir(data_folder)
 
-    # Release Info
+    # STEP 2: Release Info
+    status["PROGRESS"].update({"STEP": 2})
     release_info = discogs.ReleaseInfo(discogs_reference)
     status["LOG"].append("Fetched data from discogs by reference {ref}".format(ref=discogs_reference))
     status.update({
         "release_info": release_info
     })
 
-    # Split record
+    # STEP 3: Split record
+    status["PROGRESS"].update({"STEP": 3})
     status["LOG"].append("Splitting record audio")
     songs = audio_util.split_record(audio_path)
     index = 0
@@ -48,7 +70,8 @@ def process_side(audio_path, side, cover, discogs_reference, output_format="flac
         "songs_found": index
     })
 
-    # Finding folder structure:
+    # STEP 4: Assign files
+    status["PROGRESS"].update({"STEP": 4})
     audio_files = {}
     for fname in os.listdir(data_folder):
         path = os.path.join(data_folder, fname)
@@ -72,7 +95,6 @@ def process_side(audio_path, side, cover, discogs_reference, output_format="flac
                 }
             })
 
-    # Filter matching audio files:
     tracks = {}
     av_names = []
     for track in release_info.tracklist:
@@ -88,6 +110,8 @@ def process_side(audio_path, side, cover, discogs_reference, output_format="flac
     
     status["LOG"].append("Filtered audio files by position")
 
+    # STEP 5: Metadata & Conversion
+    status["PROGRESS"].update({"STEP": 5})
     # Create output folder
     folder_name = "{artist} - {title}".format(
         artist = release_info.artists[0]["name"],
@@ -155,8 +179,13 @@ def process_side(audio_path, side, cover, discogs_reference, output_format="flac
             os.remove(out_name)
         status["LOG"].append("  ->> Finished conversion of {pos} ({name})".format(pos=f, **use_audios[f]))
 
+    # STEP 6: Follow Up
+    status["PROGRESS"].update({"STEP": 6})
     shutil.rmtree(data_folder)
     status["LOG"].append("Removed tmp directory")
+
+    # STEP 7: Done!
+    status["PROGRESS"].update({"STEP": 7})
 
     return "./" + folder_name
 

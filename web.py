@@ -85,6 +85,12 @@ def by_upload():
         side = request.form["side"]
         discogs_ref = request.form["discogs_reference"]
 
+        if WorkerThread.get_instance() is not None:
+            if WorkerThread.get_instance().status["STATE"] == "FINISHED":
+                WorkerThread.instance = None
+            else:
+                return redirect("index")
+
         try:
             os.mkdir(".vinrecinput")
         except FileExistsError:
