@@ -39,7 +39,9 @@ def process_side(audio_path, side, cover, discogs_reference, output_format="flac
     index = 0
     for song in songs:
         index += 1
-        song.export(".vinrec/{side}{index}.wav".format(side=side.upper(), index=index))
+        filename = ".vinrec/{side}{index}.wav".format(side=side.upper(), index=index)
+        start, end = song
+        os.system("ffmpeg -i {0} -ss {1} -to {2} -c copy {3}".format(audio_path, start, end, filename))
         status["LOG"].append("Split: Side {side}, Idx {index} saved".format(side=side.upper(), index=index))
 
     status.update({
