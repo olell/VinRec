@@ -18,10 +18,10 @@ import sys
 chunk_size = 500
 silence_tresh = 500
 silence_min = 2 # silence_min * chunk_size = minimum length of silence in ms
-min_song_length = 20 # min_song_length * chunk_size = minimumg length of songs in ms
+min_song_length = 25 # min_song_length * chunk_size = minimumg length of songs in ms
 
 def split_record(path):
-    song = AudioSegment.from_wav(sys.argv[1])
+    song = AudioSegment.from_wav(path)
 
     songs = []
     cur_song = []

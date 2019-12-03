@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}By Upload{% endblock %}
+{% block heading %}Upload File/s{% endblock %}
+
+{% block main %}
+
+{% if not busy %}
+
+<form action="/by_upload" method="post" enctype="multipart/form-data">
+
+    Cover: <input type="file" name="cover"/><br>
+    {# TODO: Multiple Files #}
+    <select name="side"> 
+        <option value="A">A-Side</option>
+        <option value="B">B-Side</option>
+        <option value="C">C-Side</option>
+        <option value="D">D-Side</option>
+        <option value="E">E-Side</option>
+        <option value="F">F-Side</option>
+    </select>
+    <input type="file" name="audio"/><br>
+    Discogs Reference: 
+    <input name="discogs_reference" type="text" pattern="\d+">
+    <br><br>
+    <input type="submit" value="Upload">
+</form> 
+{% else %}
+
+<h1>VinRec is currently busy, look <a href="{{ url_for('status') }}">here</a> for a status</h1>
+
+{% endif %}
+
+{% endblock %}

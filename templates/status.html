@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Status{% endblock %}
+{% block heading %}Process Status{% endblock %}
+
+{% block main %}
+{% if thread %}
+{% if thread.status != None %}
+
+<h3>Status: {{ thread.status.STATE }}</h3>
+
+<h4>Log:</h4>
+<pre>
+{% for line in thread.status.LOG %}{{ line }}
+{% endfor %}
+</pre>
+
+{% endif %}
+{% endif %}
+{% endblock %}
