@@ -1,0 +1,4 @@
+flask
+pydub
+requests
+python-magic
