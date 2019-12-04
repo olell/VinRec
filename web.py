@@ -2,14 +2,16 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import redirect, url_for
+from flask import send_file
 
 import os
 import shutil
 import requests
 import urllib.parse
-import discogs
+import zipfile
 
 from thread_util import WorkerThread
+import discogs
 
 app = Flask(__name__)
 
@@ -91,6 +93,13 @@ def status():
     inst = WorkerThread.get_instance()
     return render_template("status.html", thread=inst)
 
+@app.route("/download/<file_name>")
+def download(file_name):
+    inst = WorkerThread.get_instance()
+    if inst.status["STATE"] == "FINISHED":
+        return send_file(inst.status["OUTPUT"])
+    else:
+        return redirect(url_for("status"))
 
 if __name__ == "__main__":
     app.run()

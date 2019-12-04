@@ -10,11 +10,20 @@ import os
 import magic
 import audio_util
 import shutil
+import zipfile
 
+def zipdir(path, ziph):
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            ziph.write(os.path.join(root, file))
 
 def process_sides(audios, cover, discogs_reference, output_format="flac", status={}):
 
+    status.update({"steps": []})
+
     # Prerequisites
+    status["steps"].append("Preparing everything")
     data_folder = ".vinrec/"
     try:
         os.mkdir(data_folder)
@@ -23,12 +32,14 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
         os.mkdir(data_folder)
 
     # Release Info
+    status["steps"].append("Fetching release information from discogs database")
     release_info = discogs.ReleaseInfo(discogs_reference)
     status.update({
         "release_info": release_info
     })
 
     # Create output folder
+    status["steps"].append("Creating output folder")
     folder_name = "{artist} - {title}".format(
         artist = release_info.artists[0]["name"],
         title = release_info.title
@@ -38,7 +49,13 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
     except FileExistsError:
         pass
 
+    # Converting cover to jpg file
+    status["steps"].append("Converting cover image")
+    os.system("ffmpeg -y -i \"{cover}\" \"./{folder_name}/cover.jpg\"".format(cover=cover, folder_name=folder_name))
+    cover = "./{folder_name}/cover.jpg".format(folder_name=folder_name)
+
     # Splitting sides
+    status["steps"].append("Splitting record sides to single audio files")
     for side in audios:
         audio_path = audios[side]
 
@@ -49,9 +66,11 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
             index += 1
             filename = ".vinrec/{side}{index}.wav".format(side=side.upper(), index=index)
             start, end = song
-            os.system("ffmpeg -i {0} -ss {1} -to {2} -c copy {3}".format(audio_path, start, end, filename))
+            os.system("ffmpeg -y -i {0} -ss {1} -to {2} -c copy {3}".format(audio_path, start, end, filename))
+        status["steps"].append("Splitted side {0}".format(side))
 
     # Assign files
+    status["steps"].append("Assigning files to track positions")
     audio_files = {}
     for fname in os.listdir(data_folder):
         path = os.path.join(data_folder, fname)
@@ -90,12 +109,11 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
     
 
     # Metadata & Conversion
-    for f in use_audios:
+    status["steps"].append("Converting and assigning metadata")
+    for f in sorted(use_audios.keys()):
         file_name = "./{folder_name}/{name}.flac".format(folder_name=folder_name, **use_audios[f])
 
-        os.system("ffmpeg -i \"{cover}\" \"./{folder_name}/cover.jpg\"".format(cover=cover, folder_name=folder_name))
-        cover = "./{folder_name}/cover.jpg".format(folder_name=folder_name)
-        os.system("ffmpeg -i \"{path}\" \"{file_name}\"".format(folder_name=folder_name, file_name=file_name, **use_audios[f]))
+        os.system("ffmpeg -y -i \"{path}\" \"{file_name}\"".format(folder_name=folder_name, file_name=file_name, **use_audios[f]))
         os.system("metaflac --import-picture-from=\"{image_path}\" \"{file_name}\"".format(image_path=cover, file_name=file_name))
 
         track = tracks[f]
@@ -124,15 +142,31 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
         )
 
         if output_format != "flac":
-            os.system("ffmpeg -i \"{0}\" \"{1}\"".format(
+            os.system("ffmpeg -y -i \"{0}\" \"{1}\"".format(
                 out_name,
                 out_name[:-4] + output_format
             ))
             os.remove(out_name)
 
+        status["steps"].append("Finished song {pos} - {name}".format(pos=f, name=track.title))
+
+
+    status["steps"].append("Zipping folder")
+    try:
+        os.remove("./{0}.zip".format(folder_name))
+    except:
+        pass
+    zipf = zipfile.ZipFile('./{0}.zip'.format(folder_name), 'w', zipfile.ZIP_DEFLATED)
+    zipdir('./{0}'.format(folder_name), zipf)
+    zipf.close()
+
     # STEP 6: Follow Up
+    status["steps"].append("Cleaning up")
     shutil.rmtree(data_folder)
+    shutil.rmtree("./{0}/".format(folder_name))
 
     status.update({
-        "FOLDER": "./{0}".format(folder_name)
+        "OUTPUT": "./{0}.zip".format(folder_name)
     })
+
+    status["steps"].append("Finished!")
