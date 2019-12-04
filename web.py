@@ -5,78 +5,42 @@ from flask import redirect, url_for
 
 import os
 import shutil
-import threading
+import requests
+import urllib.parse
+import discogs
 
-from vinrec import process_side
+from thread_util import WorkerThread
 
 app = Flask(__name__)
 
-class WorkerThread(threading.Thread):
-
-    instance = None
-
-    @staticmethod
-    def get_instance():
-        return WorkerThread.instance
-
-    @staticmethod
-    def get_busy():
-        if WorkerThread.instance is None:
-            return False
-        else:
-            status = WorkerThread.instance.status
-            if status["STATE"] == "FINISHED":
-                return False
-        return True
-
-    def __init__(self, audio_file, side, cover_file, discogs_ref):
-        super(WorkerThread, self).__init__()
-        
-        if WorkerThread.instance == None:
-            WorkerThread.instance = self
-
-        self.audio_file = audio_file
-        self.side = side
-        self.cover_file = cover_file
-        self.discogs_ref = discogs_ref
-
-        self.status = {
-            "STATE": "NOT STARTED",
-            "AUDIO_FILE": audio_file,
-            "SIDE": side,
-            "COVER_FILE": cover_file,
-            "DISCOGS_REF": discogs_ref
-        }
-        self.output_path = None
-
-    def run(self):
-        self.status.update({
-            "STATE": "STARTED"
-        })
-        print(self.status)
-        self.output_path = process_side(
-            self.audio_file,
-            self.side,
-            self.cover_file,
-            self.discogs_ref,
-            status=self.status
-        )
-        self.status.update({
-            "STATE": "FINISHED"
-        })
-        
-
-
-
 @app.route("/")
 def index():
-    return redirect(url_for("by_upload"))
-    return render_template("index.html", busy=WorkerThread.get_busy())
+    return redirect("find_release")
 
-@app.route("/by_upload", methods=["GET", "POST"])
-def by_upload():
+@app.route("/find_release", methods=["GET", "POST"])
+def find_release():
     if request.method == "GET":
-        return render_template("by_upload.html", state="upload", busy=WorkerThread.get_busy())
+        return render_template("find_release.html", state="search")
+    else:
+        query = request.form["query"]
+        
+        q = urllib.parse.quote_plus(query)
+        response = requests.get("https://www.discogs.com/de/search/ac?searchType=all&q={q}&type=a_m_r_13".format(q=q))
+
+        return render_template("find_release.html", state="results", results=response.json())
+
+@app.route("/check_release/<reference>")
+def check_release(reference):
+    
+    ri = discogs.ReleaseInfo(reference)
+    
+    return render_template("find_release.html", state="check", release=ri)
+
+@app.route("/by_upload/<discogs_ref>")
+@app.route("/by_upload", methods=["GET", "POST"])
+def by_upload(discogs_ref=None):
+    if request.method == "GET":
+        return render_template("by_upload.html", state="upload", busy=WorkerThread.get_busy(), discogs_ref=discogs_ref)
     
     if request.method == "POST":
         audio_file = request.files["audio"]
