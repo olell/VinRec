@@ -1,4 +1,4 @@
-from vinrec import process_side
+from vinrec import process_sides
 import threading
 
 class WorkerThread(threading.Thread):
@@ -19,21 +19,19 @@ class WorkerThread(threading.Thread):
                 return False
         return True
 
-    def __init__(self, audio_file, side, cover_file, discogs_ref):
+    def __init__(self, audios, cover_file, discogs_ref):
         super(WorkerThread, self).__init__()
         
         if WorkerThread.instance == None:
             WorkerThread.instance = self
 
-        self.audio_file = audio_file
-        self.side = side
+        self.audios = audios
         self.cover_file = cover_file
         self.discogs_ref = discogs_ref
 
         self.status = {
             "STATE": "NOT STARTED",
-            "AUDIO_FILE": audio_file,
-            "SIDE": side,
+            "AUDIOS": audios,
             "COVER_FILE": cover_file,
             "DISCOGS_REF": discogs_ref
         }
@@ -43,9 +41,8 @@ class WorkerThread(threading.Thread):
         self.status.update({
             "STATE": "STARTED"
         })
-        self.output_path = process_side(
-            self.audio_file,
-            self.side,
+        self.output_path = process_sides(
+            self.audios,
             self.cover_file,
             self.discogs_ref,
             status=self.status

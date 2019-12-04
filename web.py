@@ -31,9 +31,7 @@ def find_release():
 
 @app.route("/check_release/<reference>")
 def check_release(reference):
-    
     ri = discogs.ReleaseInfo(reference)
-    
     return render_template("find_release.html", state="check", release=ri)
 
 @app.route("/by_upload/<discogs_ref>")
@@ -43,10 +41,19 @@ def by_upload(discogs_ref=None):
         return render_template("by_upload.html", state="upload", busy=WorkerThread.get_busy(), discogs_ref=discogs_ref)
     
     if request.method == "POST":
-        audio_file = request.files["audio"]
         cover_file = request.files["cover"]
 
-        side = request.form["side"]
+        letters = "ABCDEFGH"
+        audios = {}
+        for i in range(0, len(letters)):
+            side = request.form.get("side_{0}".format(i), None)
+            audio = request.files.get("audio_{0}".format(i), None)
+            if side is None or audio is None:
+                continue
+            audios.update({
+                side: audio
+            })
+
         discogs_ref = request.form["discogs_reference"]
 
         if WorkerThread.get_instance() is not None:
@@ -61,23 +68,20 @@ def by_upload(discogs_ref=None):
             shutil.rmtree(".vinrecinput")
             os.mkdir(".vinrecinput")
         
-        audio_ending = audio_file.filename.split(".")[-1]
+        for side in audios:
+            ending = audios[side].filename.split(".")[-1]
+            path = ".vinrecinput/audio_side{0}.{1}".format(side, ending)
+            audios[side].save(path)
+            audios.update({
+                side: path
+            })
+
         cover_ending = cover_file.filename.split(".")[-1]
-
-        audio_path = ".vinrecinput/audio_side{0}.{1}".format(side, audio_ending)
         cover_path = ".vinrecinput/cover.{0}".format(cover_ending)
-
-        audio_file.save(audio_path)
         cover_file.save(cover_path)
 
-        info = {
-            "side_{0}".format(side): audio_path,
-            "cover": cover_path,
-            "discogs_ref": discogs_ref
-        }
-
         if WorkerThread.get_instance() is None:
-            t = WorkerThread(audio_path, side, cover_path, discogs_ref)
+            t = WorkerThread(audios, cover_path, discogs_ref)
             t.start()
 
         return redirect(url_for("status"))

@@ -8,22 +8,48 @@
 
 <form action="/by_upload" method="post" enctype="multipart/form-data">
 
-    Cover: <input type="file" name="cover"/><br>
-    {# TODO: Multiple Files #}
-    <select name="side"> 
-        <option value="A">A-Side</option>
-        <option value="B">B-Side</option>
-        <option value="C">C-Side</option>
-        <option value="D">D-Side</option>
-        <option value="E">E-Side</option>
-        <option value="F">F-Side</option>
-    </select>
-    <input type="file" name="audio"/><br>
+    Cover: <input type="file" name="cover"/><br><br>
+
+    <div id="sides">
+
+    
+    </div>
+
+    <br>
     Discogs Reference: 
-    <input name="discogs_reference" type="text" pattern="\d+">
+    <input name="discogs_reference" type="text" value="{{ discogs_ref }}" pattern="\d+">
     <br><br>
     <input type="submit" value="Upload">
 </form> 
+
+<script>
+
+num_sides = 0;
+letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
+
+function add_side(){
+    html = `<select name="side_` + num_sides.toString() + `">`
+    var i = 0;
+    letters.forEach(element => {
+        var sel = "";
+        if (i == num_sides){
+            sel = " selected"
+        }
+        html += `<option value="` + element + `"` + sel + `>` + element + `-Side</option>`;
+        i += 1;
+    });
+    html += `</select><input type="file" name="audio_` + num_sides.toString() + `"/><a href="#" class="button" onclick="add_side();">+</a><br>`;
+
+    document.getElementById("sides").innerHTML += html;
+
+    num_sides += 1;
+
+}
+
+add_side(); add_side();
+
+</script>
+
 {% else %}
 
 <h1>VinRec is currently busy, look <a href="{{ url_for('status') }}">here</a> for a status</h1>

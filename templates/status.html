@@ -4,32 +4,7 @@
 
 {% block main %}
 {% if thread %}
-{% if thread.status != None %}
-
-{% if thread.status.STATE != "FINISHED" %}
-<h3>Status: {{ thread.status.STATE }}</h3>
-{% else %}
-<h3>Status: <p style="color:#0f0;">FINISHED!</p></h3>
-{% endif %}
-<h4>Progress: </h4>
-<progress value="{{ thread.status.PROGRESS.STEP }}" max="{{ thread.status.PROGRESS.STEPS }}"></progress>
-<h4>Current Step: {{ thread.status.PROGRESS.STEP_NAMES[thread.status.PROGRESS.STEP] }}</h4>
-<h4>Log:</h4>
-<pre>
-{% for line in thread.status.LOG %}{{ line }}
-{% endfor %}
-</pre>
-
-{% if thread.status.STATE != "FINISHED" %}
-<script type = "text/JavaScript">
-    function AutoRefresh( t ) {
-        setTimeout("location.reload(true);", t);
-    }
-    AutoRefresh(1000);
-</script>
-{% endif %}
-
-{% endif %}
+Running...
 {% endif %}
 
 {% endblock %}
