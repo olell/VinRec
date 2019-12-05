@@ -162,8 +162,12 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
 
     # STEP 6: Follow Up
     status["steps"].append("Cleaning up")
-    shutil.rmtree(data_folder)
-    shutil.rmtree("./{0}/".format(folder_name))
+    try:
+        shutil.rmtree(data_folder)
+        shutil.rmtree("./{0}/".format(folder_name))
+        shutil.rmtree(".vinrecinput/")
+    except:
+        pass
 
     status.update({
         "OUTPUT": "./{0}.zip".format(folder_name)
