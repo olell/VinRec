@@ -49,7 +49,7 @@ def check_release(reference):
 @app.route("/by_upload", methods=["GET", "POST"])
 def by_upload(discogs_ref=None):
     if request.method == "GET":
-        release = discogs.ReleaseInfo(discogs_ref)
+        release = discogs.ReleaseInfo.get(discogs_ref)
         return render_template("by_upload.html", state="upload", busy=WorkerThread.get_busy(), discogs_ref=discogs_ref, release=release)
     
     if request.method == "POST":
@@ -99,8 +99,10 @@ def by_upload(discogs_ref=None):
             cover_path = ".vinrecinput/cover.{0}".format(cover_ending)
             cover_file.save(cover_path)
 
+        output_format = request.form.get("format", "flac")
+
         if WorkerThread.get_instance() is None:
-            t = WorkerThread(audios, cover_path, discogs_ref)
+            t = WorkerThread(audios, cover_path, discogs_ref, output_format)
             t.start()
 
         return redirect(url_for("status"))

@@ -19,7 +19,7 @@ class WorkerThread(threading.Thread):
                 return False
         return True
 
-    def __init__(self, audios, cover_file, discogs_ref):
+    def __init__(self, audios, cover_file, discogs_ref, output_format):
         super(WorkerThread, self).__init__()
         
         if WorkerThread.instance == None:
@@ -28,6 +28,7 @@ class WorkerThread(threading.Thread):
         self.audios = audios
         self.cover_file = cover_file
         self.discogs_ref = discogs_ref
+        self.output_format = output_format
 
         self.status = {
             "STATE": "NOT STARTED",
@@ -45,6 +46,7 @@ class WorkerThread(threading.Thread):
             self.audios,
             self.cover_file,
             self.discogs_ref,
+            output_format=self.output_format,
             status=self.status
         )
         self.status.update({

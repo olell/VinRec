@@ -32,6 +32,15 @@
     Discogs Reference: 
     <input name="discogs_reference" type="text" value="{{ discogs_ref }}" pattern="\d+">
     <br><br>
+    Output Format:
+    <select name="format">
+        <option value="flac" selected>FLAC</option>
+        <option value="wav">WAV (No metadata support)</option>
+        <option value="mp3">MP3</option>
+        <option value="mp4">MP4</option>
+        <option value="opus">Opus</option>
+    </select>
+    <br><br>
     <input type="submit" value="Upload">
 </form> 
 
@@ -69,7 +78,7 @@ function add_side(){
 
 }
 
-add_side(); add_side();
+add_side();
 
 function select_cover(image, image_id){
     var full = image.full;
