@@ -1,14 +1,27 @@
 {% extends "base.html" %}
 {% block title %}By Upload{% endblock %}
-{% block heading %}Upload File/s{% endblock %}
+{% block heading %}By Upload{% endblock %}
 
 {% block main %}
 
+
 {% if not busy %}
+
+
+<div class="row">
+<div class="col-md-8">
+<h2>{{ release.artists[0].name }} - {{ release.title }} ({{ release.released_year }})</h2>
+
+<b>Styles:</b>
+{% for style in release.styles %}{{ style }}, {% endfor %}
+<br><br>
+<h5>Upload Files:</h5>
 
 <form action="/by_upload" method="post" enctype="multipart/form-data">
 
-    Cover: <input type="file" name="cover"/><br><br>
+    <div id="form-cover">
+    Cover: <input type="file" name="cover"/>
+    </div><br><br>
 
     <div id="sides">
 
@@ -21,6 +34,16 @@
     <br><br>
     <input type="submit" value="Upload">
 </form> 
+
+</div>
+<div class="col-md-4">
+Images: (Click to select as cover)
+{% for image in release.image_list %}
+<img id="discogs_image_{{ loop.counter }}" src="{{ image.thumb }}" onclick="select_cover({{ image }}, 'discogs_image_{{ loop.counter }}');"></img><br>
+{% endfor %}
+</div>
+</div>
+
 
 <script>
 
@@ -47,6 +70,14 @@ function add_side(){
 }
 
 add_side(); add_side();
+
+function select_cover(image, image_id){
+    var full = image.full;
+    document.getElementById("form-cover").innerHTML = `Cover URL: <input type="text" name="coverurl" value="` + full + `" readonly> <a href="#" onclick="use_cover_upload();">Use Upload instead</a>`
+}
+function use_cover_upload(){
+    document.getElementById("form-cover").innerHTML = `Cover: <input type="file" name="cover"/>`;
+}
 
 </script>
 

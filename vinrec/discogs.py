@@ -8,10 +8,24 @@ TODO: This file is hacky but works, maybe I should rewrite this.
 """
 
 import requests
+import json
 
 class ReleaseInfo(object):
 
+    cache = {}
+
+    @staticmethod
+    def get(discogs_reference):
+        if discogs_reference in ReleaseInfo.cache:
+            return ReleaseInfo.cache[discogs_reference]
+        else:
+            return ReleaseInfo(discogs_reference)
+
     def __init__(self, discogs_reference):
+        ReleaseInfo.cache.update({
+            discogs_reference: self
+        })
+
         self.discogs_reference = discogs_reference
 
         # Get data from discogs api
@@ -56,6 +70,7 @@ class ReleaseInfo(object):
         for track in _tracklist:
             self.tracklist.append(TrackInfo(track))
 
+        self.image_list = get_image_list(self.discogs_reference)
 
 class TrackInfo(object):
     def __init__(self, track_data):
@@ -66,4 +81,15 @@ class TrackInfo(object):
         self.title = self._track_data.get("title", None)
         self.extraartists = self._track_data.get("extraartists", None)
 
+def get_image_list(discogs_reference):
+    response = requests.get("https://www.discogs.com/release/{0}".format(discogs_reference))
+    if response.status_code != 200:
+        raise Exception("Failed to request release page.")
+
+    page = response.text
+    start = page.find("data-images='") + len("data-images='")
+    end = page.find("'", start+1)
+    raw = page[start:end]
+    image_list = json.loads(raw)
     
+    return image_list

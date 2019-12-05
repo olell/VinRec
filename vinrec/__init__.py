@@ -34,7 +34,7 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
 
     # Release Info
     status["steps"].append("Fetching release information from discogs database")
-    release_info = discogs.ReleaseInfo(discogs_reference)
+    release_info = discogs.ReleaseInfo.get(discogs_reference)
     status.update({
         "release_info": release_info
     })

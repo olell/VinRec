@@ -8,6 +8,7 @@ import os
 import shutil
 import requests
 import urllib.parse
+import urllib.request
 import zipfile
 
 from vinrec.thread_util import WorkerThread
@@ -41,17 +42,17 @@ def find_release():
 
 @app.route("/check_release/<reference>")
 def check_release(reference):
-    ri = discogs.ReleaseInfo(reference)
+    ri = discogs.ReleaseInfo.get(reference)
     return render_template("find_release.html", state="check", release=ri)
 
 @app.route("/by_upload/<discogs_ref>")
 @app.route("/by_upload", methods=["GET", "POST"])
 def by_upload(discogs_ref=None):
     if request.method == "GET":
-        return render_template("by_upload.html", state="upload", busy=WorkerThread.get_busy(), discogs_ref=discogs_ref)
+        release = discogs.ReleaseInfo(discogs_ref)
+        return render_template("by_upload.html", state="upload", busy=WorkerThread.get_busy(), discogs_ref=discogs_ref, release=release)
     
     if request.method == "POST":
-        cover_file = request.files["cover"]
 
         letters = "ABCDEFGH"
         audios = {}
@@ -86,9 +87,17 @@ def by_upload(discogs_ref=None):
                 side: path
             })
 
-        cover_ending = cover_file.filename.split(".")[-1]
-        cover_path = ".vinrecinput/cover.{0}".format(cover_ending)
-        cover_file.save(cover_path)
+        cover_file = request.files.get("cover", None)
+        if cover_file is None:
+            cover_url = request.form.get("coverurl", None)
+            if cover_url is not None:
+                cover_ending = cover_url.split(".")[-1]
+                cover_path = ".vinrecinput/cover.{0}".format(cover_ending)
+                urllib.request.urlretrieve(cover_url, cover_path)
+        else:
+            cover_ending = cover_file.filename.split(".")[-1]
+            cover_path = ".vinrecinput/cover.{0}".format(cover_ending)
+            cover_file.save(cover_path)
 
         if WorkerThread.get_instance() is None:
             t = WorkerThread(audios, cover_path, discogs_ref)

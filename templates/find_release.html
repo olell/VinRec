@@ -46,6 +46,8 @@
 
 {% elif state == "check" %}
 
+<div class="row">
+<div class="col-md-8">
 <h2>{{ release.artists[0].name }} - {{ release.title }} ({{ release.released_year }})</h2>
 <h2><a href="{{ url_for('by_upload', discogs_ref=release.discogs_reference) }}" class="button">Use this release!</a></h2>
 
@@ -53,7 +55,7 @@
 {% for style in release.styles %}{{ style }}, {% endfor %}
 <br><br>
 <h5>Tracklist:</h5>
-<div class="table-responsive col-md-6">
+<div class="table-responsive col-md-12">
     <table class="table table-striped table-sm">
         <thead>
             <tr>
@@ -76,6 +78,14 @@
     </table>
 </div>
 
+</div>
+<div class="col-md-4">
+Images:
+{% for image in release.image_list %}
+<img src="{{ image.thumb }}"></img><br>
+{% endfor %}
+</div>
+</div>
 
 {% endif %}
 
