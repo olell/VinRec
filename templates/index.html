@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block heading %}VinRec Home{% endblock %}
+
+{% block navbar_items %}
+
+<li class="nav-item active">
+    <a class="nav-link" href="{{ url_for('find_release') }}">Find Release</a>
+</li>
+{% endblock %}
+
+{% block main %}
+{% if busy %}
+<h3>VinRec is currently busy, look <a href="{{ url_for('status') }}">here</a> for a status</h3>
+{% else %}
+<a href="{{ url_for('find_release') }}">Start by finding your release</a>
+{% endif %}
+<br><br>
+<h3>Available Records:</h3>
+<ul>
+{% for name in av_records %}
+<li><a href="{{ url_for('download', file_name=name) }}">{{ name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

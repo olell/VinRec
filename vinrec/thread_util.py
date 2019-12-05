@@ -1,4 +1,4 @@
-from vinrec import process_sides
+from . import process_sides
 import threading
 
 class WorkerThread(threading.Thread):

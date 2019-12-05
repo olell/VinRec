@@ -9,7 +9,6 @@ path and splits it at silent moment in multiple AudioSegment objects and returns
 
 from pydub import AudioSegment
 from pydub.playback import play
-import sys
 
 chunk_size = 500
 silence_tresh = 500

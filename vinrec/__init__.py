@@ -5,10 +5,11 @@ Copyright (C) 2019: Ole Lange
 This is the main file, just start it there will be helping output.
 """
 
-import discogs
+from . import discogs
+from . import audio_util
+
 import os
 import magic
-import audio_util
 import shutil
 import zipfile
 
@@ -152,11 +153,16 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
 
 
     status["steps"].append("Zipping folder")
+    zip_name = "./output_zips/{0}.zip".format(folder_name)
     try:
-        os.remove("./{0}.zip".format(folder_name))
+        os.mkdir("./output_zips/")
+    except FileExistsError:
+        pass
+    try:
+        os.remove(zip_name)
     except:
         pass
-    zipf = zipfile.ZipFile('./{0}.zip'.format(folder_name), 'w', zipfile.ZIP_DEFLATED)
+    zipf = zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED)
     zipdir('./{0}'.format(folder_name), zipf)
     zipf.close()
 
@@ -170,7 +176,7 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
         pass
 
     status.update({
-        "OUTPUT": "./{0}.zip".format(folder_name)
+        "OUTPUT_NAME": folder_name
     })
 
     status["steps"].append("Finished!")

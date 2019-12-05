@@ -10,14 +10,22 @@ import requests
 import urllib.parse
 import zipfile
 
-from thread_util import WorkerThread
-import discogs
+from vinrec.thread_util import WorkerThread
+from vinrec import discogs
 
 app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return redirect("find_release")
+    try:
+        files = os.listdir("./output_zips")
+        names = []
+        for filename in files:
+            names.append(filename.replace(".zip", ""))
+    except:
+        names = []
+    
+    return render_template("index.html", av_records=names, busy=WorkerThread.get_busy())
 
 @app.route("/find_release", methods=["GET", "POST"])
 def find_release():
@@ -95,9 +103,12 @@ def status():
 
 @app.route("/download/<file_name>")
 def download(file_name):
-    inst = WorkerThread.get_instance()
-    if inst.status["STATE"] == "FINISHED":
-        return send_file(inst.status["OUTPUT"])
+    ls = os.listdir("./output_zips")
+    if file_name + ".zip" in ls:
+        return send_file(
+            "./output_zips/{0}.zip".format(file_name),
+            as_attachment=True,
+            attachment_filename="{0}.zip".format(file_name))
     else:
         return redirect(url_for("status"))
 
