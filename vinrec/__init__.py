@@ -60,8 +60,14 @@ def process_sides(audios, cover, discogs_reference, output_format="flac", status
     for side in audios:
         audio_path = audios[side]
 
+        # find required amount of songs
+        req_songs = 0
+        for track in release_info.tracklist:
+            if track.position.startswith(side.upper()):
+                req_songs += 1
+
         # Split side
-        songs = audio_util.split_record(audio_path)
+        songs = audio_util.split_record(audio_path, req_songs)
         index = 0
         for song in songs:
             index += 1

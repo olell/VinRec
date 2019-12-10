@@ -29,10 +29,13 @@
         <a class="navbar-brand" href="/">VinRec</a>
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="/">Home</a>
           </li>
           {% block navbar_items %}
           {% endblock %}
+          <li class="nav-item active">
+            <a class="nav-link" target="_blank" href="{{ url_for('docs') }}">Docs</a>
+          </li>
         </ul>
       </nav>
     </header>

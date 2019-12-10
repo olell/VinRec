@@ -30,7 +30,7 @@
                 {% if e.type == "Release" %}
                 <tr>
                     {% set ref=e.uri.split("/")[-1] %}
-                    <td><a href="{{ url_for('check_release', reference=ref) }}">Click!  </a></td>
+                    <td><a href="{{ url_for('check_release', reference=ref) }}">Details  </a></td>
                     <td>{{ e.artist }}</td>
                     <td>{{ e.title }}</td>
                     <td>{{ e.format }}</td>

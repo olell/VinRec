@@ -10,6 +10,7 @@ import requests
 import urllib.parse
 import urllib.request
 import zipfile
+import markdown
 
 from vinrec.thread_util import WorkerThread
 from vinrec import discogs
@@ -122,6 +123,23 @@ def download(file_name):
             attachment_filename="{0}.zip".format(file_name))
     else:
         return redirect(url_for("status"))
+
+@app.route("/delete_cache")
+def delete_av():
+    try:
+        shutil.rmtree("./output_zips")
+        os.mkdir("./output_zips")
+    except:
+        pass
+    return redirect(url_for("index"))
+
+@app.route("/docs")
+def docs():
+    with open("DOCS.md", 'r') as target:
+        md = target.read()
+    html = markdown.markdown(md, extensions=["extra", "smarty"], output_format="html5")
+    return render_template("docs.html", content=html)
+
 
 if __name__ == "__main__":
     app.run()

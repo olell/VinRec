@@ -17,11 +17,13 @@ env FLASK_APP=web.py flask run
 Im Browser [`http://localhost:5000/`](http://localhost:5000/) öffnen
 
 ## Requirements
-Benötigt werden folgende software tools
+Benötigt werden folgende tools
+
 * ffmpeg
 * metaflac
 
-Zudem foglende python Pakete:
+Zudem folgende python Pakete:
+
 * flask
 * pydub
 * requests

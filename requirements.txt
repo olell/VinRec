@@ -2,3 +2,4 @@ flask
 pydub
 requests
 python-magic
+markdown

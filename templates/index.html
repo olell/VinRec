@@ -16,7 +16,7 @@
 <a href="{{ url_for('find_release') }}">Start by finding your release</a>
 {% endif %}
 <br><br>
-<h3>Available Records:</h3>
+<h3>Available Records:</h3> <a href="{{ url_for('delete_av') }}">Clear download cache</a>
 <ul>
 {% for name in av_records %}
 <li><a href="{{ url_for('download', file_name=name) }}">{{ name }}</a></li>
