@@ -46,6 +46,32 @@ def check_release(reference):
     ri = discogs.ReleaseInfo.get(reference)
     return render_template("find_release.html", state="check", release=ri)
 
+@app.route("/edit_release/<reference>", methods=["GET", "POST"])
+def edit_release(reference):
+    ri = discogs.ReleaseInfo.get(reference)
+    if request.method == "GET":
+        return render_template("edit_release.html", release=ri)
+    else:
+        ri.artists[0]["name"] = request.form.get("artist", ri.artists[0]["name"])
+        ri.title = request.form.get("title", ri.title)
+        ri.released_year = request.form.get("year", ri.released_year)
+
+        styles = request.form.get("styles", None)
+        if styles is not None:
+            _styles = styles.split(",")
+            styles = []
+            for style in _styles:
+                _style = style.strip()
+                if _style != "":
+                    styles.append(_style)
+            
+            ri.styles = styles
+
+        for track in ri.tracklist:
+            track.title = request.form.get("track_" + track.position, track.title)
+
+        return redirect("/by_upload/{0}".format(reference))
+
 @app.route("/by_upload/<discogs_ref>")
 @app.route("/by_upload", methods=["GET", "POST"])
 def by_upload(discogs_ref=None):

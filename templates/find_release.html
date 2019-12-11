@@ -50,6 +50,7 @@
 <div class="col-md-8">
 <h2>{{ release.artists[0].name }} - {{ release.title }} ({{ release.released_year }})</h2>
 <h2><a href="{{ url_for('by_upload', discogs_ref=release.discogs_reference) }}" class="button">Use this release!</a></h2>
+<h3><a href="{{ url_for('edit_release', reference=release.discogs_reference) }}" class="button">Edit this release!</a></h3>
 
 <b>Styles:</b>
 {% for style in release.styles %}{{ style }}, {% endfor %}
