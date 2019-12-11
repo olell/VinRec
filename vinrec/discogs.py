@@ -52,8 +52,8 @@ class ReleaseInfo(object):
         _status = data.get("status", None)
         _tracklist = data.get("tracklist", None)
         self.artists = data.get("artists", None)
-        self.genres = data.get("genres", None)
-        self.styles = data.get("styles", None) # Prefer these
+        self.genres = data.get("genres", [])
+        self.styles = data.get("styles", self.genres) # Prefer these
         self.uri = data.get("uri", None)
         self.data_quality = data.get("data_quality", None)
         self.title = data.get("title", None)
