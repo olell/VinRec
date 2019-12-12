@@ -17,8 +17,8 @@
 <br><br>
 <h5>Upload Files:</h5>
 
-<form action="/by_upload" method="post" enctype="multipart/form-data">
-
+<form id="upload_form" action="/by_upload" method="post" enctype="multipart/form-data">
+    
     <div id="form-cover">
     Cover: <input type="file" name="cover"/>
     </div><br><br>
@@ -42,6 +42,7 @@
     </select>
     <br><br>
     <input type="submit" value="Upload">
+    <div id="prog"></div>
 </form> 
 
 </div>
@@ -55,6 +56,45 @@ Images: (Click to select as cover)
 
 
 <script>
+
+function enhanceFormWithUploadProgress(form, progress) {
+    var xhr = new XMLHttpRequest();
+    if (!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload)) || !window.FormData) {
+        return;
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        xhr.upload.addEventListener('loadstart', function(event) {
+            progress.style.display = 'block';
+        }, false);
+
+        xhr.upload.addEventListener('progress', function(event) {
+            var percent = (100 * event.loaded / event.total);
+            progress.innerHTML = '<progress value="' + percent.toFixed(2) + '" max="100">' + percent.toFixed(2) + ' %</progress>';
+        }, false);
+
+        xhr.upload.addEventListener('load', function(event) {
+            progress.innerHTML = 'Completed, waiting for response...';
+        }, false);
+
+        xhr.addEventListener('readystatechange', function(event) {
+            if (event.target.readyState == 4 && event.target.responseText) {
+                window.location.replace("{{ url_for('status') }}")
+            } else {
+                throw new Error('Error in the response.');
+            }
+        }, false);
+
+        xhr.open(this.getAttribute('method'), this.getAttribute('action'), true);
+        xhr.send(new FormData(this));
+
+    });
+
+};
+
+enhanceFormWithUploadProgress(document.getElementById("upload_form"), document.getElementById("prog"));
 
 num_sides = 0;
 letters = ["A", "B", "C", "D", "E", "F", "G", "H"]
