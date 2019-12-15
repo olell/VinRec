@@ -29,7 +29,7 @@
         <a class="navbar-brand" href="/"><img style="max-height: 2rem; margin-right: 0.5rem;" src="{{ url_for('static', filename='img/favicon.png') }}"> VinRec</a>
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+            <a class="nav-link" href="{{ url_for('index.index') }}">Home</a>
           </li>
           {% block navbar_items %}
           {% endblock %}

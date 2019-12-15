@@ -1,0 +1,6 @@
+flask
+pydub
+requests
+python-magic
+markdown
+ffmpeg-python

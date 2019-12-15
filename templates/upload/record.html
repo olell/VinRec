@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %} Upload record {% endblock %}
+
+{% block main %}
+
+<h2> Upload Audio Files </h2>
+<br>
+<div class="container">
+    <div class="row">
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('upload.record') }}" id="upload_form">
+            <input type="file" name="files" multiple><br><br>
+            <input type="submit" value="Upload">
+            <div id="form_progress"></div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function enhanceFormWithUploadProgress(form, progress) {
+        var xhr = new XMLHttpRequest();
+        if (!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload)) || !window.FormData) {
+            return;
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            xhr.upload.addEventListener('loadstart', function(event) {
+                progress.style.display = 'block';
+            }, false);
+
+            xhr.upload.addEventListener('progress', function(event) {
+
+                var percent = (100 * event.loaded / event.total);
+                progress.innerHTML = '<progress value="' + percent.toFixed(2) + '" max="100">' + percent.toFixed(2) + ' %</progress>';
+
+                var loaded = event.loaded / 1024 / 1024;
+                var loaded_unit = "MiB";
+                var total = event.total / 1024 / 1024;
+                var total_unit = "MiB";
+
+                if (loaded > 1024) {
+                    loaded /= 1024;
+                    loaded_unit = "GiB";
+                }
+                if (total > 1024) {
+                    total /= 1024;
+                    total_unit = "GiB";
+                }
+
+                progress.innerHTML += ' ' + loaded.toFixed(2) + loaded_unit + " / " + total.toFixed(2) + total_unit;
+
+            }, false);
+
+            xhr.upload.addEventListener('load', function(event) {
+                progress.innerHTML = 'Completed, waiting for response...';
+            }, false);
+
+            xhr.addEventListener('readystatechange', function(event) {
+                if (event.target.readyState == 4 && event.target.responseText) {
+                    window.location.replace("{{ url_for('index.index') }}")
+                } else {
+                    throw new Error('Error in the response.');
+                }
+            }, false);
+
+            xhr.open(this.getAttribute('method'), this.getAttribute('action'), true);
+            xhr.send(new FormData(this));
+
+        });
+
+    };
+
+    window.onload = function() {
+        enhanceFormWithUploadProgress(document.getElementById("upload_form"), document.getElementById("form_progress"));
+    }
+
+</script>
+
+{% endblock %}
