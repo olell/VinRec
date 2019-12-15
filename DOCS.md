@@ -1,1 +1,0 @@
-# VinRec Documentation

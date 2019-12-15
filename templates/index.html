@@ -1,26 +1,37 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
-{% block heading %}VinRec Home{% endblock %}
 
-{% block navbar_items %}
-
-<li class="nav-item active">
-    <a class="nav-link" href="{{ url_for('find_release') }}">Find Release</a>
-</li>
-{% endblock %}
+{% block title %} Home {% endblock %}
 
 {% block main %}
-{% if busy %}
-<h3>VinRec is currently busy, look <a href="{{ url_for('status') }}">here</a> for a status</h3>
-{% else %}
-<a href="{{ url_for('find_release') }}">Start by finding your release</a>
-{% endif %}
-<br><br>
-<h3>Available Records:</h3> <a href="{{ url_for('delete_av') }}">Clear download cache</a>
-<ul>
-{% for name in av_records %}
-<li><a href="{{ url_for('download', file_name=name) }}">{{ name }}</a></li>
-{% endfor %}
-</ul>
+
+<div class="container">
+
+    <div class="row">
+
+        {# Showing a step by step workflow on the left side #}
+        <div class="col-md-6">
+            <h2> Workflow </h2>
+            <br>
+            Do you want to create <a href="#">new audio files by recording them</a><br>
+            Or do yout want to <a href="#">upload existing audio files</a>
+        </div>
+
+        {# Showing a list of finished records on the right side #}
+        <div class="col-md-6">
+            <h2> Finished Records </h2>
+
+            {#  TODO: List of finished records
+            <ul>
+            {% for record in finished_records %}
+                <li> <a href="#"> {{ record.name }} </a></li>
+            {% endfor %}
+            </ul>
+            #}
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

@@ -17,7 +17,7 @@
     <!-- Bootstrap core CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
+    <!-- Custom styles -->
     <link href="{{ url_for('static', filename='css/index.css') }}" rel="stylesheet">
   </head>
 
@@ -26,16 +26,13 @@
     <header>
       <!-- Fixed navbar -->
       <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-        <a class="navbar-brand" href="/">VinRec</a>
+        <a class="navbar-brand" href="/"><img style="max-height: 2rem; margin-right: 0.5rem;" src="{{ url_for('static', filename='img/favicon.png') }}"> VinRec</a>
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="{{ url_for('index') }}">Home</a>
           </li>
           {% block navbar_items %}
           {% endblock %}
-          <li class="nav-item active">
-            <a class="nav-link" target="_blank" href="{{ url_for('docs') }}">Docs</a>
-          </li>
         </ul>
       </nav>
     </header>
@@ -47,7 +44,8 @@
       {% endblock %}
     </main>
 
-    <footer class="footer">
+    <!-- Footer -->
+    <footer class="footer bg-dark">
       <div class="container">
         <span class="text-muted">VinRec (C) 2019 Ole Lange - View <a href="https://github.com/olell/VinRec">Source</a> on Github</span>
       </div>

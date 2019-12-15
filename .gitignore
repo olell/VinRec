@@ -4,6 +4,9 @@
 *.wav
 output_zips/
 
+### Custom stuff ###
+old_code/*
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
