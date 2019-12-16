@@ -65,9 +65,17 @@
             {% else %}
             <a href="{{ url_for('index.theme', value='bright') }}"> Bright </a>
             {% endif %}
-        </div>
+        </span>
       </div>
     </footer>
+
+
+    <script src="{{ url_for('static', filename='js/jquery.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+    {% block scripts %}
+    {% endblock %}
 
   </body>
 </html>
