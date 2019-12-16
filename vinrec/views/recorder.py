@@ -42,7 +42,18 @@ def index():
         if action == "start_record":
             instance = Recorder.get_instance()
             if instance is None:
-                Recorder(name=request.form.get("name", "no_name")).start()
+                name = request.form.get("name", None)
+                if len(name.strip()) == 0: name = None
+                rate = request.form.get("rate", None)
+                format = request.form.get("format", None)
+
+                if None in (name, rate, format): # One or more parameter aren't in form
+                    raise Exception("TODO Error handling: Missing on or more params")
+                if format not in ("S16_LE", "S24_LE", "S32_LE"):
+                    raise Exception("TODO Error handling: wrong format")
+                rate = int(rate)
+
+                Recorder(name=name, sample_rate=rate, sample_format=format).start()
         if action == "stop_record":
             instance = Recorder.get_instance()
             if instance is not None:
