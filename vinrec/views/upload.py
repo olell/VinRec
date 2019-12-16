@@ -6,7 +6,7 @@ from flask import redirect
 from flask import url_for
 
 # Global imports
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 import os
 import ffmpeg
 
@@ -23,8 +23,8 @@ app = Blueprint("upload", "vinrec.views.upload")
 @app.route("/record", methods=["GET", "POST"])
 def record():
     if request.method == "GET":
-        return render_template("upload/record.html")
-    
+        return render_template("upload/record.jinja")
+
     elif request.method == "POST":
 
         create_permanent_directories()
@@ -37,7 +37,7 @@ def record():
             filename = secure_filename(f.filename)
             path = os.path.join(locations.TMP, filename)
             f.save(path)
-            
+
             # Convert file and write to permanent directory
             input_path = path
             new_filename = '.'.join(filename.split(".")[:-1]) + ".wav" # Change file extension to .wav

@@ -11,7 +11,7 @@ from vinrec.const import formats
 def create_permanent_directories():
     if not os.path.isdir(locations.DATA_DIR):
         os.makedirs(locations.DATA_DIR)
-    
+
     for path in locations.PERMANENT_DIRS:
         if not os.path.isdir(path):
             os.makedirs(path)

@@ -1,0 +1,118 @@
+{% extends "base.jinja" %}
+
+{% block head %}
+<script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
+{% endblock %}
+
+{% block title %} Recorder {% endblock %}
+
+{% block main %}
+
+{% if status == 'not_recording' %}
+
+<h1> Recorder </h1>
+
+<form action="{{ url_for('recorder.index') }}" method="POST">
+    <input type="hidden" name="action" value="start_record">
+    <input type="text"  name="name" placeholder="Record name">
+    <input type="submit" value="Start Recorder">
+</form>
+
+{% elif status == 'recording' %}
+
+<h1 > Recording "{{ instance.name }}" </h1>
+
+<form action="{{ url_for('recorder.index') }}" method="POST">
+    <input type="hidden" name="action" value="stop_record">
+    <input type="submit" value="Stop Recorder">
+</form>
+
+<h2 id="record_length"></h2>
+
+<div class="container col-md-12">
+<div class="row col-md-12">
+    <div class="col-md-8">
+        <canvas id="canvas"></canvas>
+    </div>
+</div>
+</div>
+
+<script>
+
+var chart = null;
+
+function update_status(){
+    var xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('readystatechange', function(event) {
+        if (event.target.readyState == 4 && event.target.responseText) {
+            var status = JSON.parse(event.target.responseText);
+
+            var minutes = (status.record_length / 1000) / 60;
+            var seconds = Math.floor((minutes - Math.floor(minutes)) * 60);
+            minutes = Math.floor(minutes);
+
+            minutes = String(minutes);
+            seconds = String(seconds);
+
+            if (minutes.length < 2) {
+                minutes = "0" + minutes;
+            }
+            if (seconds.length < 2) {
+                seconds = "0" + seconds;
+            }
+
+            document.getElementById("record_length").innerText = "Record length: " + minutes + ":" + seconds;
+
+            chart.data = {
+                labels: status.times,
+                datasets: [{
+                    data: status.waveform,
+                    label: "Waveform",
+                    borderColor: "#3e95cd",
+                    fill: false
+                }]
+            };
+            chart.update();
+        }
+    }, false);
+
+    xhr.open("GET", "{{ url_for('recorder.status') }}", true);
+    xhr.send();
+}
+
+
+window.onload = function() {
+
+    chart = new Chart(document.getElementById("canvas"), {
+        type: 'line',
+        data: {},
+        options: {
+            title: {
+            display: true,
+            text: 'Waveform'
+            },
+            animation: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 1
+                    }
+                }]
+            },
+            bezierCurve: false
+        }
+    });
+
+
+    update_status();
+    setInterval(update_status, 500);
+}
+
+</script>
+
+
+{% endif %}
+
+{% endblock %}

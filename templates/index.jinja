@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base.jinja" %}
 
 {% block title %} Home {% endblock %}
 
@@ -14,7 +14,7 @@
             <br>
             <h4> Audio Files </h4>
             <div class="ml-3">
-                Do you want to create <a class="font-weight-bold" href="#">new audio files by recording them</a><br>
+                Do you want to create <a class="font-weight-bold" href="{{ url_for('recorder.index') }}">new audio files by recording them</a><br>
                 Or do you want to <a href="{{ url_for('upload.record') }}">upload existing audio files</a>
             </div>
             <br>
@@ -42,7 +42,7 @@
             </ul>
             {% endif %}
             <br>
-            <h4> Unfinished Records </h4>
+            <h4> Stored Audio Files </h4>
             {% if unfinished_records|length == 0 %}
                 <div class="ml-3">
                 -
@@ -50,7 +50,7 @@
             {% else %}
             <ul>
             {% for record in unfinished_records %}
-                <li> {{ record }} </li>
+                <li> {{ record }} (<a href="{{ url_for('recorder.delete', name=record) }}">Remove</a>) </li>
             {% endfor %}
             </ul>
             {% endif %}
