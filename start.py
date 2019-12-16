@@ -16,6 +16,7 @@ from vinrec.views.recorder import app as recorder_view_blueprint
 
 # Creating Flask app
 app = Flask(__name__)
+app.secret_key = "this must not be secret in this case"
 
 ## Blueprints
 app.register_blueprint(index_view_blueprint)
