@@ -22,14 +22,11 @@ def unfinished_records(name):
 
     unfinished_records = get_unfinished_records()
     if not name in unfinished_records:
-        print(".")
         abort(404)
 
     filename = name + "." + formats.WORK_FORMAT
     path = os.path.join(locations.UNFINISHED_RECORDS, filename)
-    print(path)
     if not os.path.exists(path):
-        print("..")
         abort(404)
 
     return send_file(path)
