@@ -34,7 +34,7 @@ def index():
             else:
                 status = "recording"
 
-        return render_template("recorder/index.jinja", status=status, instance=instance)
+        return render_template("recorder/index.html", status=status, instance=instance)
 
     elif request.method == "POST":
 

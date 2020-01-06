@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Select Cover Image{% endblock %}
+
+{% block main %}
+
+<h2>Select Cover Image</h2>
+
+<div class="container">
+<div class="row">
+    <div class="container">
+        <h3>Upload Own Image</h3>
+    </div>
+    <div class="col-md-12">
+        <form action="#">
+            <input type="submit" value="Upload!">
+        </form>
+    </div>
+</div>
+<br><br>
+<div class="row">
+    <div class="container">
+        <h3>Discogs Images</h3>
+    </div>
+    {% for image in release.image_list %}
+    <div class="col-md-4">
+        {# {{ image.id }} #}
+        <a href="#"><img style="width: 100%;" src="{{ image.full }}"/></a>
+    </div>
+{% endfor %}
+</div>
+</div>
+
+{% endblock %}

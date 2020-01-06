@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %} Search Discogs Data {% endblock %}
+
+{% block main %}
+
+<h3>Query:</h3>
+<form method="POST" action="{{ url_for('release_information.search_discogs') }}">
+    <input class="form-control input-lg" type="text" name="query" placeholder="Search query, e.g. barcode or artist and album name"><br>
+    <input type="submit" value="Go!">
+</form>
+
+
+{% endblock %}

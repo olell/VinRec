@@ -1,4 +1,4 @@
-{% extends "base.jinja" %}
+{% extends "base.html" %}
 
 {% block title %} Home {% endblock %}
 
@@ -20,8 +20,8 @@
             <br>
             <h4> Process your files </h4>
             <div class="ml-3">
-                Do you want to <a class="font-weight-bold" href="#"> search your record in the discogs database </a><br>
-                Or do you want to <a href="#">enter custom information about your record</a>
+                Do you want to <a class="font-weight-bold" href="{{ url_for('release_information.search_discogs') }}"> search your record in the discogs database </a><br>
+                Or do you want to <a href="{{ url_for('release_information.create') }}">enter custom information about your record</a>
             </div>
         </div>
 

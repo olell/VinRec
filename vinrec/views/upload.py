@@ -23,7 +23,7 @@ app = Blueprint("upload", "vinrec.views.upload")
 @app.route("/record", methods=["GET", "POST"])
 def record():
     if request.method == "GET":
-        return render_template("upload/record.jinja")
+        return render_template("upload/record.html")
 
     elif request.method == "POST":
 

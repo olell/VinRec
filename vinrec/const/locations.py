@@ -1,4 +1,4 @@
-DATA_DIR = "."  # TODO: This might be done via config stuff
+DATA_DIR = "./vinrec_data"  # TODO: This might be done via config stuff
 
 # Permanent directories
 UNFINISHED_RECORDS = "{0}/records/unfinished".format(DATA_DIR)

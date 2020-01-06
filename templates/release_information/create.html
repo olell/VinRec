@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Create Release Information{% endblock %}
+
+{% block main %}
+<h2> Create Release Information </h2>
+
+<form action="{{ url_for('release_information.create') }}" method="POST">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="artist" class="col-md-3">Artist: </label><input class="col-md-9" type="text" name="artist" placeholder="Artist"><br>
+                <label for="title" class="col-md-3">Title: </label><input class="col-md-9" type="text" name="title" placeholder="Title"><br>
+                <label for="year" class="col-md-3">Year: </label><input class="col-md-9" type="text" name="year" placeholder="YYYY" pattern="\d\d\d\d"><br>
+            </div>
+        </div>
+    </div>
+    <br><br><input type="submit" value="Save!">
+
+</form>
+
+{% endblock %}
