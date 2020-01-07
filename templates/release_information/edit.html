@@ -14,7 +14,7 @@
 
     <b>Styles:</b>
 
-    <input type="text" placeholder="Style, Style, Style" name="styles" value="{% for genre in release.genres %}{{ genre }}, {% endfor %}">
+    <input type="text" placeholder="Style, Style, Style" name="styles" value="{% for genre in release.genres.split(';') %}{{ genre }}, {% endfor %}">
     <br><br>
     <h5>Tracklist:</h5>
         
@@ -28,7 +28,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for track in release.tracks %}
+                {% for track in release.get_tracks() %}
                 <tr>
                     <td>{{ track.side }}{{ track.position }}</td>
                     <td><input style="width: 90%;" placeholder="{{ track.side }}{{ track.position }} Title" type="text" name="track_{{ track.side }}{{ track.position }}" value="{{ track.title }}"></td>
@@ -42,7 +42,7 @@
 </div>
 <div class="col-md-4">
 Images:<br>
-{% for image in release.image_list %}
+{% for image in release.get_images() %}
 <img src="{{ image.thumb }}"/><br>
 {% endfor %}
 </div>

@@ -10,6 +10,7 @@ from flask import abort
 from vinrec.util.discogs import search
 from vinrec.util.discogs import load_release_info
 from vinrec.util.release_information import ReleaseCache
+from vinrec.util.release_information import TrackInfo
 
 # Blueprint
 app = Blueprint("release_information", "vinrec.views.release_information")
@@ -60,10 +61,13 @@ def edit_release(ref):
                 if _genre != "":
                     genres.append(_genre)
             
-            ri.genres = genres
+            ri.genres = ';'.join(genres)
+        
+        ri.save()
 
-        for track in ri.tracks:
+        for track in TrackInfo.select().where(TrackInfo.release==ri):
             track.title = request.form.get("track_" + track.side + str(track.position), track.title)
+            track.save()
 
         return redirect(url_for("process.use_release", rid=ref))
 

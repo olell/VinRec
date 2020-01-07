@@ -12,7 +12,7 @@
 <h3><a href="{{ url_for('release_information.edit_release', ref=release.rid) }}" class="button">Edit this release!</a></h3>
 
 <b>Styles:</b>
-{% for genre in release.genres %}{{ genre }}, {% endfor %}
+{% for genre in release.genres.split(";") %}{{ genre }}, {% endfor %}
 <br><br>
 <h5>Tracklist:</h5>
 <div class="table-responsive col-md-12">
@@ -25,7 +25,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for track in release.tracks %}
+            {% for track in release.get_tracks() %}
             <tr>
                 <td>{{ track.side }}{{ track.position }}</td>
                 <td>{{ track.title }}</td>
@@ -39,7 +39,7 @@
 </div>
 <div class="col-md-4">
 Images:<br>
-{% for image in release.image_list %}
+{% for image in release.get_images() %}
 <img src="{{ image.thumb }}"/><br>
 {% endfor %}
 </div>

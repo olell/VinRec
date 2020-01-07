@@ -9,6 +9,20 @@ Copyright (C) 2019 Ole Lange
 ## Flask imports
 from flask import Flask
 
+## Database
+from vinrec.util.database import Database
+db = Database.get()
+
+### Create tables
+from vinrec.util.release_information import ReleaseInfo
+from vinrec.util.release_information import TrackInfo
+from vinrec.util.release_information import ImageInfo
+db.create_tables([
+    ReleaseInfo,
+    TrackInfo,
+    ImageInfo
+])
+
 ## Local imports
 from vinrec.views.index import app as index_view_blueprint
 from vinrec.views.upload import app as upload_view_blueprint

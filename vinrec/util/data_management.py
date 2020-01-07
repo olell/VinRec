@@ -26,7 +26,6 @@ def clear_temporary_directories():
         if os.path.isdir(path):
             shutil.rmtree(path)
 
-
 # Lists from directories
 def get_unfinished_records():
     dir_list = os.listdir(locations.UNFINISHED_RECORDS)

@@ -7,6 +7,7 @@ import urllib.parse
 from vinrec.util.release_information import ReleaseCache
 from vinrec.util.release_information import ReleaseInfo
 from vinrec.util.release_information import TrackInfo
+from vinrec.util.release_information import ImageInfo
 
 def search(query):
     q = urllib.parse.quote_plus(query)
@@ -45,7 +46,10 @@ def load_release_info(reference, cache=True):
 
     # Get data from discogs api
     _url = "https://api.discogs.com/releases/{0}".format(reference)
-    response = requests.get(_url)
+    response = requests.get(_url, headers={
+        "User-Agent": "-"
+    })
+    print(response)
     if response.status_code != 200:
         try:
             data = response.json()
@@ -64,8 +68,34 @@ def load_release_info(reference, cache=True):
         # Todo: Raise something different
         raise Exception("Discogs api probably didn't return json")
 
+    released_date = data.get("released", None)
+    released_year = None
+    if released_date:
+        released_year = released_date.split("-")[0]
 
-    track_infos = []
+
+
+    release_info = ReleaseInfo(
+        artist = data.get("artists", [None])[0]["name"],
+        title = data.get("title", None),
+        genres = ';'.join(data.get("styles", data.get("genres", []))),
+        released = released_year,
+        rid = reference,
+        is_external = True
+    )
+
+    release_info.save()
+
+    image_list = get_image_list(reference)
+    for image in image_list:
+        ii = ImageInfo(
+            full = image["full"],
+            thumb = image["thumb"],
+            iid = str(image["id"]),
+            release = release_info
+        )
+        ii.save()
+
     for track in data.get("tracklist", []):
         if track.get("type_", None) == "track":
             _position = track.get("position", None)
@@ -80,26 +110,10 @@ def load_release_info(reference, cache=True):
                 side = side,
                 position = position,
                 title = track.get("title", None),
-                extraartists = track.get("extraartists", None)
+                release = release_info
             )
-            track_infos.append(ti)
 
-    released_date = data.get("released", None)
-    released_year = None
-    if released_date:
-        released_year = released_date.split("-")[0]
-
-    image_list = get_image_list(reference)
-
-    release_info = ReleaseInfo(
-        artist = data.get("artists", [None])[0]["name"],
-        title = data.get("title", None),
-        genres = data.get("styles", data.get("genres", [])),
-        released = released_year,
-        tracks = track_infos,
-        image_list = image_list,
-        rid = reference
-    )
+            ti.save()
 
 
     if cache:

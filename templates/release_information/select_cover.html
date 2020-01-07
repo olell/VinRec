@@ -21,7 +21,7 @@
     <div class="container">
         <h3>Discogs Images</h3>
     </div>
-    {% for image in release.image_list %}
+    {% for image in release.get_images() %}
     <div class="col-md-4">
         {# {{ image.id }} #}
         <a href="#"><img style="width: 100%;" src="{{ image.full }}"/></a>
