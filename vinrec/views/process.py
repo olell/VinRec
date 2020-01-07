@@ -18,4 +18,5 @@ def use_release(rid):
         return redirect(url_for("index.index"))
     if release.cover_image is None:
         return redirect(url_for("release_information.select_cover", ref=rid))
-    return "HI " + str(rid) + "..."
+
+    return ""

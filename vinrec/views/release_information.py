@@ -6,6 +6,9 @@ from flask import url_for
 from flask import request
 from flask import abort
 
+# Global imports
+import os
+
 # Local imports
 from vinrec.util.discogs import search
 from vinrec.util.discogs import load_release_info
@@ -13,6 +16,9 @@ from vinrec.util.discogs import store_cover
 from vinrec.util.release_information import ReleaseCache
 from vinrec.util.release_information import TrackInfo
 from vinrec.util.release_information import ImageInfo
+
+from vinrec.util.data_management import create_permanent_directories
+from vinrec.const.locations import COVER_PATH
 
 # Blueprint
 app = Blueprint("release_information", "vinrec.views.release_information")
@@ -79,7 +85,14 @@ def select_cover(ref):
     if request.method == "GET":
         return render_template("release_information/select_cover.html", release=ri)
     else:
-        return "HI"
+        create_permanent_directories()
+        fname = "{0}_{1}.jpeg".format(ri.rid, "uc")
+        path = os.path.join(COVER_PATH, fname)
+        f = request.files.get("cover_file")
+        f.save(path)
+        ri.cover_image = fname
+        ri.save()        
+        return redirect(url_for("process.use_release", rid=ri.rid))
 
 @app.route("/use_cover/<release>/<cover>")
 def use_cover(release, cover):

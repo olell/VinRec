@@ -11,7 +11,8 @@
         <h3>Upload Own Image</h3>
     </div>
     <div class="col-md-12">
-        <form action="#">
+        <form action="{{ url_for('release_information.select_cover', ref=release.rid) }}" method="POST" enctype="multipart/form-data">
+            <input type="file" name="cover_file">
             <input type="submit" value="Upload!">
         </form>
     </div>
