@@ -6,6 +6,7 @@ output_zips/
 
 ### Custom stuff ###
 old_code/*
+vinrec_data/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
