@@ -9,8 +9,10 @@ from flask import abort
 # Local imports
 from vinrec.util.discogs import search
 from vinrec.util.discogs import load_release_info
+from vinrec.util.discogs import store_cover
 from vinrec.util.release_information import ReleaseCache
 from vinrec.util.release_information import TrackInfo
+from vinrec.util.release_information import ImageInfo
 
 # Blueprint
 app = Blueprint("release_information", "vinrec.views.release_information")
@@ -78,3 +80,12 @@ def select_cover(ref):
         return render_template("release_information/select_cover.html", release=ri)
     else:
         return "HI"
+
+@app.route("/use_cover/<release>/<cover>")
+def use_cover(release, cover):
+    ri = ReleaseCache.get(release)
+    cover = ImageInfo.get_or_none(ImageInfo.iid==cover and ImageInfo.release==ri)
+    fname = store_cover(ri, cover)
+    ri.cover_image = fname
+    ri.save()
+    return redirect(url_for("process.use_release", rid=ri.rid))

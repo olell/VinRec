@@ -16,6 +16,7 @@
         </form>
     </div>
 </div>
+{% if release.is_external %}
 <br><br>
 <div class="row">
     <div class="container">
@@ -24,10 +25,11 @@
     {% for image in release.get_images() %}
     <div class="col-md-4">
         {# {{ image.id }} #}
-        <a href="#"><img style="width: 100%;" src="{{ image.full }}"/></a>
+        <a href="{{ url_for('release_information.use_cover', release=release.rid, cover=image.iid) }}"><img style="width: 100%;" src="{{ image.full }}"/></a>
     </div>
-{% endfor %}
+    {% endfor %}
 </div>
+{% endif %}
 </div>
 
 {% endblock %}

@@ -2,12 +2,17 @@
 import requests
 import json
 import urllib.parse
+import os
 
 # Local imports
 from vinrec.util.release_information import ReleaseCache
 from vinrec.util.release_information import ReleaseInfo
 from vinrec.util.release_information import TrackInfo
 from vinrec.util.release_information import ImageInfo
+
+from vinrec.util.data_management import create_permanent_directories
+from vinrec.const.locations import COVER_PATH
+
 
 def search(query):
     q = urllib.parse.quote_plus(query)
@@ -120,3 +125,16 @@ def load_release_info(reference, cache=True):
         ReleaseCache.add(release_info, reference)
 
     return release_info
+
+def store_cover(release, image):
+    create_permanent_directories()
+    fname = "{0}_{1}.jpeg".format(release.rid, image.iid)
+    path = os.path.join(COVER_PATH, fname)
+    with open(path, 'wb') as target:
+        response = requests.get(image.full, stream=True)
+        for block in response.iter_content(1024):
+            if not block:
+                break
+
+            target.write(block)
+    return fname
