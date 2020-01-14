@@ -9,6 +9,10 @@ Copyright (C) 2019 Ole Lange
 ## Flask imports
 from flask import Flask
 
+# Create folder structure
+from vinrec.util.data_management import create_permanent_directories
+create_permanent_directories()
+
 ## Database
 from vinrec.util.database import Database
 db = Database.get()
@@ -30,10 +34,6 @@ from vinrec.views.recorder import app as recorder_view_blueprint
 from vinrec.views.download import app as download_view_blueprint
 from vinrec.views.release_information import app as release_information_view_blueprint
 from vinrec.views.process import app as process_view_blueprint
-
-# Create folder structure
-from vinrec.util.data_management import create_permanent_directories
-create_permanent_directories()
 
 # Creating Flask app
 app = Flask(__name__)
