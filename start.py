@@ -31,6 +31,10 @@ from vinrec.views.download import app as download_view_blueprint
 from vinrec.views.release_information import app as release_information_view_blueprint
 from vinrec.views.process import app as process_view_blueprint
 
+# Create folder structure
+from vinrec.util.data_management import create_permanent_directories
+create_permanent_directories()
+
 # Creating Flask app
 app = Flask(__name__)
 app.secret_key = "the key must not be secret in this case"
