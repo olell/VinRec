@@ -4,3 +4,5 @@ requests
 python-magic
 markdown
 ffmpeg-python
+scipy
+numpy
