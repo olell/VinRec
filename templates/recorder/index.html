@@ -20,8 +20,8 @@
         <option value="8000">8 kHz</option>
         <option value="44100">44.1 kHz</option>
         <option value="48000">48 kHz</option>
-        <option value="96000">96 kHz</option>
-        <option value="192000" selected>192 kHz (recommended)</option>
+        <option value="96000" selected>96 kHz (recommended)</option>
+        <option value="192000">192 kHz</option>
         <option value="384000">384 kHz</option>
     </select><br>
     Format: <br>
@@ -112,7 +112,7 @@ window.onload = function() {
             scales: {
                 yAxes: [{
                     ticks: {
-                        suggestedMin: 0,
+                        suggestedMin: -1,
                         suggestedMax: 1
                     }
                 }]

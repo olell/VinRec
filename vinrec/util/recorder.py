@@ -1,4 +1,5 @@
-from pydub import AudioSegment
+from scipy.io import wavfile
+import numpy as np
 
 from threading import Thread
 import subprocess
@@ -44,6 +45,11 @@ class Recorder(Thread):
 
         self.sample_format = sample_format
         self.sample_rate = sample_rate
+        self.bitdepth = {
+            "S16_LE": 16,
+            "S24_LE": 24,
+            "S32_LE": 32
+        }[self.sample_format]
         self.stereo = True
 
         self.running = False
@@ -65,17 +71,31 @@ class Recorder(Thread):
         if self.running and self.process is not None:
             self.process.send_signal(2)  # SIGINT -> CTRL + C
 
-    def get_status(self, max_waveform_points=20000, chunklen=100):
+    def get_status(self, seconds=20, pps=100):
         status = {}
         if os.path.exists(self.file_name):
-            segment = AudioSegment.from_wav(self.file_name)
+            #segment = AudioSegment.from_wav(self.file_name)
+            rate, data = wavfile.read(self.file_name)
+
             status.update({
-                "record_length": len(segment),
+                "record_length": (len(data) / rate) * 1000,
                 "name": self.name,
                 "filename": self.file_name
             })
 
             waveform_points = []
+            waveform_times = []
+            
+            points = seconds * pps
+
+            samples = int(seconds * rate)
+            data0 = data[:, 0][-samples:]
+            parts = np.array_split(data0, points)
+            waveform_points = np.average(parts, 1)
+            waveform_points = list(waveform_points / ((2**self.bitdepth)/2))
+            waveform_times = list(np.arange(seconds, 0, -(seconds/points)))
+            #"""
+            """
             if len(segment) >= max_waveform_points:
                 subseg = segment[-max_waveform_points:]
                 for ms in subseg:
@@ -99,6 +119,11 @@ class Recorder(Thread):
             mx = max(waveform_points)
             status.update({
                 "waveform": list(map(lambda x: x / mx, new_points)),
+                "times": waveform_times
+            })
+            """
+            status.update({
+                "waveform": waveform_points,
                 "times": waveform_times
             })
 
