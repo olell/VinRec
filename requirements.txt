@@ -4,5 +4,8 @@ requests
 python-magic
 markdown
 ffmpeg-python
+peewee
+
+# On rasperrypi you might have to install these package via apt-get
 scipy
 numpy
