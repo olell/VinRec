@@ -3,6 +3,7 @@ import requests
 import json
 import urllib.parse
 import os
+import time
 
 # Local imports
 from vinrec.util.release_information import ReleaseCache
@@ -14,13 +15,65 @@ from vinrec.util.data_management import create_permanent_directories
 from vinrec.const.locations import COVER_PATH
 
 
-def search(query):
+class SearchResultCache(object):
+
+    instance = None
+    
+    @staticmethod
+    def _getinstance():
+        if SearchResultCache.instance is not None:
+            return SearchResultCache.instance
+        else:
+            cache = SearchResultCache()
+            SearchResultCache.instance = cache
+            return cache
+
+    @staticmethod
+    def get(query):
+        return SearchResultCache._getinstance()._get(query)
+
+    @staticmethod
+    def add(query, results):
+        return SearchResultCache._getinstance()._add(query, results)
+
+    def __init__(self):
+        self.cache = {}
+
+    def _add(self, query, results):
+        self.cache.update({
+                query: {
+                    "results": results,
+                    "timestamp": time.time()
+                }
+            })
+    
+    def _get(self, query):
+        cached = self.cache.get(query, None)
+        if cached is not None:
+            timestamp = cached["timestamp"]
+            if time.time() - timestamp > 1800:
+                self.cache.pop(query)
+                return None
+            else:
+                return cached["results"]
+        else:
+            return None
+
+
+
+def search(query, cache=True):
+    cached = SearchResultCache.get(query)
+    if cached is not None:
+        print("Use cached")
+        return cached
+    
     q = urllib.parse.quote_plus(query)
     response = requests.get("https://www.discogs.com/de/search/ac?searchType=all&q={q}&type=a_m_r_13".format(q=q))
     if response.status_code != 200:
         raise Exception("Failed to request search data from discogs.")
 
     result = response.json()
+    SearchResultCache.add(query, result)
     return result
 
 def get_image_list(ref):

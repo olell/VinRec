@@ -12,18 +12,32 @@
                 <th>Title</th>
                 <th>Format</th>
                 <th>Discogs Ref</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for e in results %}
             {% if e.type == "Release" %}
             <tr>
-                {% set ref=e.uri.split("/")[-1] %}
-                <td><a href="{{ url_for('release_information.check_release', ref=ref) }}">Details  </a></td>
-                <td>{{ e.artist }}</td>
-                <td>{{ e.title }}</td>
+                <td><a href="{{ url_for('release_information.check_release', ref=e.rid) }}">Details  </a></td>
+                
+                {% if e.local_stored %}
+                    <td>{{ e.release_info.artist }}</td>
+                    <td>{{ e.release_info.title }}</td>
+                {% else %}
+                    <td>{{ e.artist }}</td>
+                    <td>{{ e.title }}</td>
+                {% endif %}
+
                 <td>{{ e.format }}</td>
-                <td>{{ ref }}</td>
+                <td>{{ e.rid }}</td>
+                
+                {% if e.local_stored %}
+                    <td><a href="#" onclick="delete_release({{ e.rid }});">Delete from local database</a></td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+            
             </tr>
             {% endif %}
             {% endfor %}
@@ -31,4 +45,14 @@
 
     </table>
 </div>
+
+<script>
+    function delete_release(ref){
+        url = "{{ url_for('release_information.remove', ref='replace_this') }}".replace('replace_this', ref);
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open( "GET", url, false ); // false for synchronous request
+        xmlHttp.send( null );
+        window.location.reload();
+    }
+</script>
 {% endblock %}

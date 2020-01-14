@@ -35,6 +35,17 @@ def search_discogs():
             abort(422)
 
         results = search(query)
+        for result in results:
+            rid = result["uri"].split("/")[-1]
+            result.update({"rid": rid})
+
+            ri = ReleaseCache.get(rid)
+            if ri is not None:
+                result.update({
+                    "local_stored": True,
+                    "release_info": ri
+                })
+            
         return render_template("release_information/discogs_results.html", results=results)
 
 @app.route("/create", methods=["GET", "POST"])
@@ -44,6 +55,15 @@ def create():
     
     else:
         return redirect(url_for('release_information.create'))
+
+@app.route("/remove/<ref>")
+def remove(ref):
+    # Remove release from database
+    ri = ReleaseCache.get(ref)
+    TrackInfo.delete().where(TrackInfo.release==ri)
+    ImageInfo.delete().where(ImageInfo.release==ri)
+    ri.delete_instance()
+    return "Deleted instance"
 
 @app.route("/check/<ref>")
 def check_release(ref):
