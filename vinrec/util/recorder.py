@@ -1,4 +1,4 @@
-from scipy.io import wavfile
+import wavio
 import numpy as np
 
 from threading import Thread
@@ -8,6 +8,7 @@ import time
 
 from vinrec.const.locations import UNFINISHED_RECORDS
 from vinrec.util.data_management import create_permanent_directories
+from vinrec.util.config import Config
 
 def split_to_chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
@@ -26,7 +27,7 @@ class Recorder(Thread):
     def clear_instance():
         Recorder.instance = None
 
-    def __init__(self, name, stereo=True, sample_rate=192000, sample_format="S32_LE"):
+    def __init__(self, name):
 
         if Recorder.instance != None:
             raise Exception("There is already a recorder object")
@@ -43,14 +44,13 @@ class Recorder(Thread):
         if os.path.exists(self.file_name):
             raise FileExistsError()
 
-        self.sample_format = sample_format
-        self.sample_rate = sample_rate
-        self.bitdepth = {
-            "S16_LE": 16,
-            "S24_LE": 24,
-            "S32_LE": 32
-        }[self.sample_format]
-        self.stereo = True
+        conf = Config.get()
+
+        self.sample_format = conf["RECORDING"]["Format"]
+        self.sample_rate = conf["RECORDING"]["SampleRate"]
+        self.bitdepth = int(conf["RECORDING"]["BitDepth"])
+        self.channels = conf["RECORDING"]["Channels"]
+        self.device = conf["RECORDING"]["Device"]
 
         self.running = False
         self.process = None
@@ -61,7 +61,8 @@ class Recorder(Thread):
             "arecord",
             "-f", self.sample_format,
             "-r", str(self.sample_rate),
-            "-c", "2" if self.stereo else "1",
+            "-c", str(self.channels),
+            "-D", self.device,
             self.file_name
         ])
         stdout, stderr = self.process.communicate()
@@ -75,7 +76,9 @@ class Recorder(Thread):
         status = {}
         if os.path.exists(self.file_name):
             #segment = AudioSegment.from_wav(self.file_name)
-            rate, data = wavfile.read(self.file_name)
+            wav = wavio.read(self.file_name)
+            rate = wav.rate
+            data = wav.data
 
             status.update({
                 "record_length": (len(data) / rate) * 1000,

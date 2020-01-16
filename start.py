@@ -4,6 +4,10 @@ Vinrec - vinrec.py
 Copyright (C) 2019 Ole Lange
 ~~ LICENSE WILL FOLLOW ~~
 """
+## Loading Config
+from vinrec.util.config import Config
+import os
+Config.get(os.environ["VINREC_CFG"])
 
 # Imports
 ## Flask imports

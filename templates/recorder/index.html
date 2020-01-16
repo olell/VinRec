@@ -15,22 +15,7 @@
 <form action="{{ url_for('recorder.index') }}" method="POST" class="col-md-6">
     <input type="hidden" name="action" value="start_record">
     <input type="text"  name="name" placeholder="Record name"><br><br>
-    Sample Rate:<br>
-    <select name="rate">
-        <option value="8000">8 kHz</option>
-        <option value="44100">44.1 kHz</option>
-        <option value="48000">48 kHz</option>
-        <option value="96000" selected>96 kHz (recommended)</option>
-        <option value="192000">192 kHz</option>
-        <option value="384000">384 kHz</option>
-    </select><br>
-    Format: <br>
-    <select name="format">
-        <option value="S16_LE">16-Bit</option>
-        <option value="S24_LE">24-Bit</option>
-        <option value="S32_LE" selected>32-Bit</option>
-    </select>
-    <br><br><br>
+    
     <input type="submit" value="Start Recorder">
 </form>
 
