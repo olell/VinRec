@@ -4,6 +4,7 @@ import json
 import urllib.parse
 import os
 import time
+import uuid
 
 # Local imports
 from vinrec.models.release_information import ReleaseCache
@@ -33,6 +34,10 @@ class SearchResultCache(object):
         return SearchResultCache._getinstance()._get(query)
 
     @staticmethod
+    def get_by_id(sid):
+        return SearchResultCache._getinstance()._get_by_id(sid)
+
+    @staticmethod
     def add(query, results):
         return SearchResultCache._getinstance()._add(query, results)
 
@@ -40,12 +45,15 @@ class SearchResultCache(object):
         self.cache = {}
 
     def _add(self, query, results):
+        sid = str(len(self.cache) + 1)
         self.cache.update({
                 query: {
                     "results": results,
-                    "timestamp": time.time()
+                    "timestamp": time.time(),
+                    "id": sid
                 }
             })
+        return sid
     
     def _get(self, query):
         cached = self.cache.get(query, None)
@@ -55,7 +63,15 @@ class SearchResultCache(object):
                 self.cache.pop(query)
                 return None
             else:
-                return cached["results"]
+                return cached["id"], cached["results"]
+        else:
+            return None
+
+    def _get_by_id(self, sid):
+        for key in self.cache:
+            entry = self.cache[key]
+            if entry["id"] == sid:
+                return sid, entry["results"]
         else:
             return None
 
@@ -73,8 +89,8 @@ def search(query, cache=True):
         raise Exception("Failed to request search data from discogs.")
 
     result = response.json()
-    SearchResultCache.add(query, result)
-    return result
+    sid = SearchResultCache.add(query, result)
+    return sid, result
 
 def get_image_list(ref):
     response = requests.get("https://www.discogs.com/release/{0}".format(ref))

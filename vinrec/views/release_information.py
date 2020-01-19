@@ -8,9 +8,11 @@ from flask import abort
 
 # Global imports
 import os
+import copy
 
 # Local imports
 from vinrec.util.discogs import search
+from vinrec.util.discogs import SearchResultCache
 from vinrec.util.discogs import load_release_info
 from vinrec.util.discogs import store_cover
 from vinrec.models.release_information import ReleaseCache
@@ -34,19 +36,25 @@ def search_discogs():
         if query is None:
             abort(422)
 
-        results = search(query)
-        for result in results:
-            rid = result["uri"].split("/")[-1]
-            result.update({"rid": rid})
+        sid, results = search(query)
+        return redirect(url_for('release_information.discogs_results', sid=sid))
+    
+@app.route("/discogs_results/<sid>")
+def discogs_results(sid):
+    sid, results = SearchResultCache.get_by_id(sid)
+    results = copy.deepcopy(results)
+    for result in results:
+        rid = result["uri"].split("/")[-1]
+        result.update({"rid": rid})
 
-            ri = ReleaseCache.get(rid)
-            if ri is not None:
-                result.update({
-                    "local_stored": True,
-                    "release_info": ri
-                })
-            
-        return render_template("release_information/discogs_results.html", results=results)
+        ri = ReleaseCache.get(rid)
+        if ri is not None:
+            result.update({
+                "local_stored": True,
+                "release_info": ri
+            })
+        
+    return render_template("release_information/discogs_results.html", results=results)
 
 @app.route("/create", methods=["GET", "POST"])
 def create():
