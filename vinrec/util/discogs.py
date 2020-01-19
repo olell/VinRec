@@ -6,10 +6,10 @@ import os
 import time
 
 # Local imports
-from vinrec.util.release_information import ReleaseCache
-from vinrec.util.release_information import ReleaseInfo
-from vinrec.util.release_information import TrackInfo
-from vinrec.util.release_information import ImageInfo
+from vinrec.models.release_information import ReleaseCache
+from vinrec.models.release_information import ReleaseInfo
+from vinrec.models.release_information import TrackInfo
+from vinrec.models.release_information import ImageInfo
 
 from vinrec.util.data_management import create_permanent_directories
 from vinrec.const.locations import COVER_PATH

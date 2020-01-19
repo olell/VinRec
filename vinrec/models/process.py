@@ -3,7 +3,7 @@ import peewee
 
 # Local imports
 from vinrec.util.database import Database
-from vinrec.util.release_information import ReleaseInfo
+from vinrec.models.release_information import ReleaseInfo
 
 
 class ProcessModel(peewee.Model):

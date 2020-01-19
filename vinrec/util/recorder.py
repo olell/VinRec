@@ -75,7 +75,7 @@ class Recorder(Thread):
     def get_status(self, seconds=20, pps=100):
         status = {}
         if os.path.exists(self.file_name):
-            #segment = AudioSegment.from_wav(self.file_name)
+            
             wav = wavio.read(self.file_name)
             rate = wav.rate
             data = wav.data
@@ -97,34 +97,7 @@ class Recorder(Thread):
             waveform_points = np.average(parts, 1)
             waveform_points = list(waveform_points / ((2**self.bitdepth)/2))
             waveform_times = list(np.arange(seconds, 0, -(seconds/points)))
-            #"""
-            """
-            if len(segment) >= max_waveform_points:
-                subseg = segment[-max_waveform_points:]
-                for ms in subseg:
-                    waveform_points.append(ms.max)
-            else:
-                for ms in segment:
-                    waveform_points.append(ms.max)
-                while len(waveform_points) < max_waveform_points:
-                    waveform_points.append(0)
-
-            new_points = []
-            chunks = split_to_chunks(waveform_points, chunklen)
-            for chunk in chunks:
-                new_points.append(sum(chunk) / len(chunk))
-
-            waveform_times = []
-            for i in range(0, len(new_points)):
-                t = (max_waveform_points) - (i * chunklen)
-                waveform_times.append(t)
-
-            mx = max(waveform_points)
-            status.update({
-                "waveform": list(map(lambda x: x / mx, new_points)),
-                "times": waveform_times
-            })
-            """
+            
             status.update({
                 "waveform": waveform_points,
                 "times": waveform_times

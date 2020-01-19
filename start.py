@@ -22,12 +22,12 @@ from vinrec.util.database import Database
 db = Database.get()
 
 ### Create tables
-from vinrec.util.release_information import ReleaseInfo
-from vinrec.util.release_information import TrackInfo
-from vinrec.util.release_information import ImageInfo
+from vinrec.models.release_information import ReleaseInfo
+from vinrec.models.release_information import TrackInfo
+from vinrec.models.release_information import ImageInfo
 
-from vinrec.util.process import ProcessSide
-from vinrec.util.process import ProcessModel
+from vinrec.models.process import ProcessSide
+from vinrec.models.process import ProcessModel
 
 db.create_tables([
     ReleaseInfo,

@@ -13,9 +13,9 @@ import os
 from vinrec.util.discogs import search
 from vinrec.util.discogs import load_release_info
 from vinrec.util.discogs import store_cover
-from vinrec.util.release_information import ReleaseCache
-from vinrec.util.release_information import TrackInfo
-from vinrec.util.release_information import ImageInfo
+from vinrec.models.release_information import ReleaseCache
+from vinrec.models.release_information import TrackInfo
+from vinrec.models.release_information import ImageInfo
 
 from vinrec.util.data_management import create_permanent_directories
 from vinrec.const.locations import COVER_PATH
