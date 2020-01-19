@@ -25,10 +25,17 @@ db = Database.get()
 from vinrec.util.release_information import ReleaseInfo
 from vinrec.util.release_information import TrackInfo
 from vinrec.util.release_information import ImageInfo
+
+from vinrec.util.process import ProcessSide
+from vinrec.util.process import ProcessModel
+
 db.create_tables([
     ReleaseInfo,
     TrackInfo,
-    ImageInfo
+    ImageInfo,
+
+    ProcessModel,
+    ProcessSide
 ])
 
 ## Local imports

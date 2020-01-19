@@ -7,6 +7,9 @@ from flask import url_for
 # Local imports
 from vinrec.util.release_information import ReleaseCache
 
+from vinrec.util.process import ProcessModel
+from vinrec.util.process import ProcessSide
+
 # Blueprint
 app = Blueprint("process", "vinrec.views.process")
 
