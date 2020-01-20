@@ -8,19 +8,6 @@ from vinrec.util.database import Database
 # Objects containing metadata
 class ReleaseInfo(peewee.Model):
 
-    """def __init__(self, artist, title, genres, released, tracks, image_list, rid=None):
-        self.rid = rid
-        self.artist = artist   # Name of the artist/s, str
-        self.title = title    # Title of this release, str
-        self.genres = genres   # Genres/Styles, list of strings
-        self.released = released # Release Year, int
-
-        self.tracks = tracks
-        
-        self.image_list = image_list
-        self.cover_image = None
-    """
-
     rid = peewee.TextField()
     is_external = peewee.BooleanField(default=False)
     is_edited = peewee.BooleanField(default=False)
@@ -43,13 +30,6 @@ class ReleaseInfo(peewee.Model):
 
 class TrackInfo(peewee.Model):
 
-    """def __init__(self, duration, side, position, title, extraartists):
-        self.duration = duration
-        self.side = side
-        self.position = position
-        self.title = title
-        self.extraartists = extraartists"""
-    
     duration = peewee.IntegerField()
     side = peewee.CharField(max_length=1)
     position = peewee.IntegerField()

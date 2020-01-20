@@ -68,8 +68,10 @@ def create():
 def remove(ref):
     # Remove release from database
     ri = ReleaseCache.get(ref)
-    TrackInfo.delete().where(TrackInfo.release==ri)
-    ImageInfo.delete().where(ImageInfo.release==ri)
+    for track in ri.get_tracks():
+        track.delete_instance()
+    for image in ri.get_images():
+        image.delete_instance()
     ri.delete_instance()
     return "Deleted instance"
 
