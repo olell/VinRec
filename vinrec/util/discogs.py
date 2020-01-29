@@ -199,6 +199,7 @@ def store_cover(release, image):
     create_permanent_directories()
     fname = "{0}_{1}.jpeg".format(release.rid, image.iid)
     path = os.path.join(COVER_PATH, fname)
+    print(path)
     with open(path, 'wb') as target:
         response = requests.get(image.full, stream=True)
         for block in response.iter_content(1024):

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Process Record{% endblock %}
+
+{% block main %}
+<h2> Process Record </h2>
+<h3> {{ process.release.artist }} - {{ process.release.title }} ({{ process.release.released }}) </h3>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            Genres:
+            <ul>
+            {% for genre in process.release.get_genres() %}
+                <li>{{ genre }}</li>
+            {% endfor %}
+            </ul>
+            <a href="{{ url_for('release_information.edit_release', ref=process.release.rid) }}">Edit Release</a><br>
+            <br>
+            Sides:
+            <ul>
+            {% for side in process.get_sides() %}
+                <li><b>{{ side.side }}-Side:</b> {{ side.record }}</li>
+            {% endfor %}
+            </ul>
+            <a href="{{ url_for('process.assign_sides', pid=process.id) }}">(Re-)Assign sides</a>
+        </div>
+        <div class="col-md-4">
+            Cover Image: (<a href="{{ url_for('release_information.select_cover', ref=process.release.rid) }}">Change</a>)
+            <img style="width: 100%;" src="{{ url_for('data.cover_image', rid=process.release.rid, nc=ts) }}">
+        </div>
+    </div>
+</div>
+{% endblock %}

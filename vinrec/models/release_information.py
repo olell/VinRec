@@ -25,6 +25,9 @@ class ReleaseInfo(peewee.Model):
     def get_images(self):
         return ImageInfo.select().where(ImageInfo.release==self).objects()
 
+    def get_genres(self):
+        return self.genres.split(";")
+
     class Meta:
         database = Database.get()
 

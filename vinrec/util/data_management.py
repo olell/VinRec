@@ -33,6 +33,7 @@ def get_unfinished_records():
     for filename in dir_list:
         if filename.endswith("." + formats.WORK_FORMAT):
             files.append(filename.split("." + formats.WORK_FORMAT)[0])
+    files.sort()
     return files
 
 def get_finished_records():
@@ -41,4 +42,5 @@ def get_finished_records():
     for filename in dir_list:
         if filename.endswith(".zip"):
             files.append(filename.split(".zip")[0])
+    files.sort()
     return files

@@ -21,10 +21,10 @@ def index():
 
     return render_template("index.html", finished_records=finished_records, unfinished_records=unfinished_records)
 
-@app.route("/theme/<value>")
-def theme(value):
+@app.route("/theme/<value>/<url>")
+def theme(value, url):
     if value not in ("dark", "bright"):
         raise Exception("TODO: Error handling: Unknown theme")
     else:
         session["theme"] = value
-        return redirect(url_for('index.index'))
+        return redirect(url.replace("%2F", "/"))

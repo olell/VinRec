@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Assign Sides to Audio Files{% endblock %}
+
+{% block main %}
+
+<h2>Assign Sides to Audio Files</h2>
+<h3>{{ process.release.artist }} - {{ process.release.title }} ({{ process.release.released }})</h3>
+<div class="container">
+<div class="row">
+    <form action="{{ url_for('process.assign_sides', pid=process.id) }}" method="POST">
+        <ul>
+        {% for side in sides %}
+            <li>{{ side }}-Side: <select name="side_{{side}}">
+                {% for record in records %}
+                    <option value="{{ record }}" {% if guessed[side.lower()] == record %}selected> (Guessed: ) {% else %}>{% endif %}{{ record }}</option>
+                {% endfor %}
+            </select></li>
+        {% endfor %}
+        </ul>
+        <input type="submit" value="Save!">
+    </form>
+</div>
+</div>
+
+{% endblock %}

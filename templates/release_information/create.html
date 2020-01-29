@@ -13,6 +13,27 @@
                 <label for="artist" class="col-md-3">Artist: </label><input class="col-md-9" type="text" name="artist" placeholder="Artist"><br>
                 <label for="title" class="col-md-3">Title: </label><input class="col-md-9" type="text" name="title" placeholder="Title"><br>
                 <label for="year" class="col-md-3">Year: </label><input class="col-md-9" type="text" name="year" placeholder="YYYY" pattern="\d\d\d\d"><br>
+                <label for="styles" class="col-md-3">Styles: </label><input class="col-md-9" type="text" placeholder="Style, Style, Style" name="styles" value=""><br><br>
+            </div>
+        </div>
+        <div class="row">   
+            <div class="table-responsive col-md-8">
+                <h5>Tracklist:</h5>
+                <table class="table table-striped table-sm" id="tracktable">
+                    <thead>
+                        <tr>
+                            <th>Side</th>
+                            <th>Track</th>
+                            <th>Title</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="track_table_body">
+                        
+                    </tbody>
+                </table>
+                <a href="#" onclick="add_row();">Add Row</a><br>
+                <a href="#" onclick="rem_row();">Remove Row</a>
             </div>
         </div>
     </div>
@@ -20,4 +41,35 @@
 
 </form>
 
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+
+    function add_row(){
+        var table = document.getElementById("tracktable");
+        var row = table.insertRow();
+        var row_count = table.rows.length - 2;
+        row.innerHTML = `
+        <tr>
+            <td><select name="track_` + row_count + `_side">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+            </select></td>
+            <td><input type="number" name="track_` + row_count + `_track" value=1></td>
+            <td><input type="text" name="track_` + row_count + `_title" placeholder="Title"></td>
+            <td>--:--   </td>
+        </tr>
+        `
+    }
+    function rem_row(){
+        var table = document.getElementById("tracktable");
+        table.deleteRow(-1);
+    }
+</script>
 {% endblock %}

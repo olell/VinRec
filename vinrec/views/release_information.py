@@ -9,6 +9,7 @@ from flask import abort
 # Global imports
 import os
 import copy
+import uuid
 
 # Local imports
 from vinrec.util.discogs import search
@@ -18,6 +19,7 @@ from vinrec.util.discogs import store_cover
 from vinrec.models.release_information import ReleaseCache
 from vinrec.models.release_information import TrackInfo
 from vinrec.models.release_information import ImageInfo
+from vinrec.models.release_information import ReleaseInfo
 
 from vinrec.util.data_management import create_permanent_directories
 from vinrec.const.locations import COVER_PATH
@@ -62,7 +64,47 @@ def create():
         return render_template("release_information/create.html")
     
     else:
-        return redirect(url_for('release_information.create'))
+        artist = request.form["artist"]
+        title = request.form["title"]
+        released = request.form["year"]
+        genres = request.form["styles"]
+        
+        _genres = genres.split(",")
+        genres = []
+        for genre in _genres:
+            _genre = genre.strip()
+            if _genre != "":
+                genres.append(_genre)
+        print(genres)
+
+        ri = ReleaseInfo(
+            rid = str(uuid.uuid1()).replace("-", ""),
+            is_external = False,
+
+            artist = artist,
+            title = title,
+            genres = ';'.join(genres),
+            released = int(released)
+        )
+        ri.save()
+
+        track_index = 0
+        while request.form.get("track_{0}_side".format(track_index), None) is not None:
+            side = request.form["track_{0}_side".format(track_index)]
+            track = int(request.form["track_{0}_track".format(track_index)])
+            title = request.form["track_{0}_title".format(track_index)]
+            track_index += 1
+
+            ti = TrackInfo(
+                duration=0,
+                side = side,
+                position = int(track),
+                title  = title,
+                release = ri
+            )
+            ti.save()
+
+        return redirect(url_for('process.use_release', rid=ri.rid))
 
 @app.route("/remove/<ref>")
 def remove(ref):
@@ -118,6 +160,8 @@ def select_cover(ref):
         create_permanent_directories()
         fname = "{0}_{1}.jpeg".format(ri.rid, "uc")
         path = os.path.join(COVER_PATH, fname)
+        if os.path.isfile(path):
+            os.remove(path)
         f = request.files.get("cover_file")
         f.save(path)
         ri.cover_image = fname
@@ -127,7 +171,7 @@ def select_cover(ref):
 @app.route("/use_cover/<release>/<cover>")
 def use_cover(release, cover):
     ri = ReleaseCache.get(release)
-    cover = ImageInfo.get_or_none(ImageInfo.iid==cover and ImageInfo.release==ri)
+    cover = ImageInfo.get_or_none(ImageInfo.iid==cover, ImageInfo.release==ri)
     fname = store_cover(ri, cover)
     ri.cover_image = fname
     ri.save()

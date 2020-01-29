@@ -45,6 +45,7 @@ from vinrec.views.recorder import app as recorder_view_blueprint
 from vinrec.views.download import app as download_view_blueprint
 from vinrec.views.release_information import app as release_information_view_blueprint
 from vinrec.views.process import app as process_view_blueprint
+from vinrec.views.data import app as data_view_blueprint
 
 # Creating Flask app
 app = Flask(__name__)
@@ -57,3 +58,4 @@ app.register_blueprint(recorder_view_blueprint, url_prefix="/recorder")
 app.register_blueprint(download_view_blueprint, url_prefix="/download")
 app.register_blueprint(release_information_view_blueprint, url_prefix="/release_information")
 app.register_blueprint(process_view_blueprint, url_prefix="/process")
+app.register_blueprint(data_view_blueprint, url_prefix="/data")
