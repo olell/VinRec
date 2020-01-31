@@ -20,6 +20,8 @@ from vinrec.models.release_information import ReleaseCache
 from vinrec.models.release_information import TrackInfo
 from vinrec.models.release_information import ImageInfo
 from vinrec.models.release_information import ReleaseInfo
+from vinrec.models.process import ProcessModel
+from vinrec.models.process import ProcessSide
 
 from vinrec.util.data_management import create_permanent_directories
 from vinrec.const.locations import COVER_PATH
@@ -61,7 +63,8 @@ def discogs_results(sid):
 @app.route("/create", methods=["GET", "POST"])
 def create():
     if request.method == "GET":
-        return render_template("release_information/create.html")
+        releases = ReleaseInfo.select().where(ReleaseInfo.is_external == False).objects()
+        return render_template("release_information/create.html", releases=releases)
     
     else:
         artist = request.form["artist"]
@@ -107,15 +110,26 @@ def create():
         return redirect(url_for('process.use_release', rid=ri.rid))
 
 @app.route("/remove/<ref>")
-def remove(ref):
+@app.route("/remove/<ref>/<url>")
+def remove(ref, url=None):
+    print(ref, url)
     # Remove release from database
     ri = ReleaseCache.get(ref)
     for track in ri.get_tracks():
         track.delete_instance()
     for image in ri.get_images():
         image.delete_instance()
+    
+    for process in ProcessModel.select().where(ProcessModel.release==ri).objects():
+        for side in ProcessSide.select().where(ProcessSide.process==process).objects():
+            side.delete_instance()
+        process.delete_instance()
+
     ri.delete_instance()
-    return "Deleted instance"
+    if url is None:
+        return redirect(url_for("index.index"))
+    else:
+        return redirect(url.replace("%2F", "/"))
 
 @app.route("/check/<ref>")
 def check_release(ref):

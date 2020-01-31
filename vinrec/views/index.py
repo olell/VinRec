@@ -15,11 +15,7 @@ app = Blueprint("index", "vinrec.views.index")
 # Routes
 @app.route("/")
 def index():
-
-    finished_records = sorted(get_finished_records())
-    unfinished_records = sorted(get_unfinished_records())
-
-    return render_template("index.html", finished_records=finished_records, unfinished_records=unfinished_records)
+    return render_template("index.html")
 
 @app.route("/theme/<value>/<url>")
 def theme(value, url):

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %} Data Manager {% endblock %}
+
+{% block main %}
+
+<h2> Data Manager </h2>
+<br>
+<div class="container">
+    <div class="row">
+    <div class="col-md-6">
+        <h2> Stored Data </h2>
+        <br>
+        <h4> Finished Records </h4>
+        {% if finished_records|length == 0 %}
+            <div class="ml-3">
+            -
+            </div>
+        {% else %}
+        <ul>
+        {% for record in finished_records %}
+            <li> <a href="#"> {{ record.name }} </a></li> {# TODO: Link #}
+        {% endfor %}
+        </ul>
+        {% endif %}
+        <br>
+        <h4> Stored Audio Files (<a href="{{ url_for('upload.record') }}">Upload</a>/<a href="{{ url_for('recorder.index') }}">Record</a>) </h4>
+        {% if unfinished_records|length == 0 %}
+            <div class="ml-3">
+            -
+            </div>
+        {% else %}
+        <ul>
+        {% for record in unfinished_records %}
+            <li> {{ record }} (<a href="{{ url_for('recorder.delete', name=record) }}">Remove</a>) </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        <h2>Database Overview</h2>
+        <br>
+        <h4> Processes </h4>
+        {% if processes|length == 0 %}
+            <div class="ml-3">
+            -
+            </div>
+        {% else %}
+        <ul>
+        {% for process in processes %}
+            <li> ({{ process }}.) {{ process.release.artist }} - {{ process.release.title }} ({{ process.release.released }}) </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        <br>
+        <h4> Cached external record information </h4>
+        {% if external|length == 0 %}
+            <div class="ml-3">
+            -
+            </div>
+        {% else %}
+        <ul>
+        {% for release in external %}
+            <li> {{release.artist }} - {{ release.title }} ({{ release.released }}) (<a href="{{ url_for('release_information.edit_release', ref=release.rid )}}">Edit</a>/<a href="{{ url_for('release_information.remove', ref=release.rid, url=request.path.replace('/', '%2F') )}}">Remove</a>) </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+        <br>
+        <h4> Cached self-created record information</h4>
+        {% if internal|length == 0 %}
+            <div class="ml-3">
+            -
+            </div>
+        {% else %}
+        <ul>
+        {% for release in internal %}
+            <li> {{release.artist }} - {{ release.title }} ({{ release.released }}) (<a href="{{ url_for('release_information.edit_release', ref=release.rid )}}">Edit</a>/<a href="{{ url_for('release_information.remove', ref=release.rid, url=request.path.replace('/', '%2F') )}}">Remove</a>) </li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    </div>
+</div>
+{% endblock %}

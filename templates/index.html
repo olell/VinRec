@@ -28,34 +28,7 @@
         {# Showing a list of finished records on the right side #}
         <div class="col-md-6">
             <h2> Stored Data </h2>
-            <br>
-            <h4> Finished Records </h4>
-            {% if finished_records|length == 0 %}
-                <div class="ml-3">
-                -
-                </div>
-            {% else %}
-            <ul>
-            {% for record in finished_records %}
-                <li> <a href="#"> {{ record.name }} </a></li> {# TODO: Link #}
-            {% endfor %}
-            </ul>
-            {% endif %}
-            <br>
-            <h4> Stored Audio Files </h4>
-            {% if unfinished_records|length == 0 %}
-                <div class="ml-3">
-                -
-                </div>
-            {% else %}
-            <ul>
-            {% for record in unfinished_records %}
-                <li> {{ record }} (<a href="{{ url_for('recorder.delete', name=record) }}">Remove</a>) </li>
-            {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
+            <a href="{{ url_for('data.index') }}"><b>Manage locally stored data</b></a><br>
     </div>
 
 </div>
