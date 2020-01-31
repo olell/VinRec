@@ -48,7 +48,7 @@
         {% else %}
         <ul>
         {% for process in processes %}
-            <li> ({{ process }}.) {{ process.release.artist }} - {{ process.release.title }} ({{ process.release.released }}) </li>
+            <li> <a href="{{ url_for('process.use_release', rid=process.release.rid) }}">({{ process }}.) {{ process.release.artist }} - {{ process.release.title }} ({{ process.release.released }})</a> </li>
         {% endfor %}
         </ul>
         {% endif %}
