@@ -44,3 +44,18 @@ def get_finished_records():
             files.append(filename.split(".zip")[0])
     files.sort()
     return files
+
+def get_unfinished_record_path(record):
+    return os.path.join(locations.UNFINISHED_RECORDS, record + "." + formats.WORK_FORMAT)
+
+def get_temp_directory(name):
+    create_temporary_directories()
+    path = os.path.join(locations.TMP, name)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return path
+
+def remove_temp_directory(name):
+    path = os.path.join(locations.TMP, name)
+    if os.path.exists(path):
+        shutil.rmtree(path)
