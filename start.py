@@ -51,6 +51,14 @@ from vinrec.views.data import app as data_view_blueprint
 app = Flask(__name__)
 app.secret_key = "the key must not be secret in this case"
 
+## Before first request
+from vinrec.util.data_management import clear_temporary_directories
+@app.before_first_request
+def before_first_request():
+    # Remove all temporary directory that might exist
+    clear_temporary_directories()
+
+
 ## Blueprints
 app.register_blueprint(index_view_blueprint)
 app.register_blueprint(upload_view_blueprint, url_prefix="/upload")
